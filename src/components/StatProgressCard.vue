@@ -2,7 +2,7 @@
 defineProps({
   value: { type: [String, Number], required: true },
   label: { type: String, default: '' },
-  percent: { type: Number, default: 60 },
+  percent: { type: [String, Number], default: 60 },
   color: { type: String, default: 'var(--accent-yellow)' },
 })
 </script>
