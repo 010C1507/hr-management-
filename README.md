@@ -52,6 +52,28 @@ npm run build    # build สำหรับ production
 
 > **หมายเหตุด้านความปลอดภัย:** นโยบาย RLS ในไฟล์ `schema.sql` เปิดให้ anon key อ่าน/เขียนได้ทั้งหมดเพื่อความสะดวกในการทดลอง ก่อนนำไปใช้งานจริงควรเพิ่มระบบ authentication และจำกัดสิทธิ์ตาม `auth.uid()` หรือ role ของผู้ใช้
 
+## Deploy ขึ้นโฮสต์ฟรี
+
+โปรเจกต์นี้เป็น static SPA (build แล้วได้ไฟล์ static ล้วน) จึงใช้โฮสต์ฟรีสำหรับ static site ได้เลย แนะนำ **Vercel** หรือ **Netlify** — มี config พร้อมใช้ในโปรเจกต์แล้ว (`vercel.json`, `netlify.toml`) ที่ทำให้ client-side routing ของ Vue Router ทำงานถูกต้อง (กัน 404 ตอน refresh หน้าอื่นที่ไม่ใช่ `/`)
+
+**หมายเหตุ:** Google Apps Script ไม่เหมาะกับ hosting เว็บแอปแบบนี้ เพราะไม่รองรับการเสิร์ฟไฟล์ static หลายไฟล์ (JS/CSS ที่ Vite แยก chunk) และไม่รองรับ SPA routing
+
+### วิธี deploy ด้วย Vercel
+
+1. ไปที่ https://vercel.com สมัคร/ล็อกอินด้วยบัญชี GitHub
+2. กด **Add New → Project** แล้วเลือก repo `010c1507/hr-management-`
+3. Framework Preset จะตรวจพบ "Vite" อัตโนมัติ (Build Command: `npm run build`, Output: `dist`)
+4. ไปที่ **Environment Variables** เพิ่ม `VITE_SUPABASE_URL` และ `VITE_SUPABASE_ANON_KEY` (ค่าจากขั้นตอน Supabase ด้านบน)
+5. กด **Deploy** — จากนั้นทุกครั้งที่ push โค้ดเข้า branch ที่เชื่อมไว้ Vercel จะ build และ deploy ให้อัตโนมัติ
+
+### วิธี deploy ด้วย Netlify
+
+1. ไปที่ https://netlify.com สมัคร/ล็อกอินด้วยบัญชี GitHub
+2. กด **Add new site → Import an existing project** แล้วเลือก repo นี้
+3. Build command: `npm run build`, Publish directory: `dist` (มีอยู่แล้วใน `netlify.toml`)
+4. ไปที่ **Site configuration → Environment variables** เพิ่ม `VITE_SUPABASE_URL` และ `VITE_SUPABASE_ANON_KEY`
+5. กด **Deploy site**
+
 ## โครงสร้างโปรเจกต์
 
 ```
