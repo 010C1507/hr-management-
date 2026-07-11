@@ -56,7 +56,6 @@ const bottomMenu = [{ to: '/settings', label: 'ตั้งค่า', icon: 'se
   width: 236px;
   flex-shrink: 0;
   background: var(--sidebar-gradient);
-  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
   padding: 28px 18px;
   display: flex;
   flex-direction: column;
