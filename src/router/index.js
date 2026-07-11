@@ -14,6 +14,12 @@ const routes = [
     meta: { label: 'พนักงาน', icon: 'users' },
   },
   {
+    path: '/onboarding',
+    name: 'onboarding',
+    component: () => import('../views/Onboarding.vue'),
+    meta: { label: 'รับพนักงานใหม่', icon: 'briefcase' },
+  },
+  {
     path: '/attendance',
     name: 'attendance',
     component: () => import('../views/Attendance.vue'),
