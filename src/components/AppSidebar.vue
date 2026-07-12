@@ -7,6 +7,7 @@ const route = useRoute()
 const menu = [
   { to: '/', label: 'แดชบอร์ด', icon: 'home' },
   { to: '/employees', label: 'พนักงาน', icon: 'users' },
+  { to: '/recruitment', label: 'สรรหาบุคลากร', icon: 'search' },
   { to: '/onboarding', label: 'รับพนักงานใหม่', icon: 'briefcase' },
   { to: '/attendance', label: 'เวลาเข้า-ออกงาน', icon: 'clock' },
   { to: '/leave', label: 'การลา', icon: 'calendar' },
