@@ -70,7 +70,7 @@ const profile = {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgba(255, 255, 255, 0.5);
+  border: 3px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -113,7 +113,7 @@ const profile = {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .option-row:last-child {
@@ -148,7 +148,7 @@ const profile = {
 .slider {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.25);
+  background: #cbd5e1;
   border-radius: 999px;
   cursor: pointer;
   transition: background 0.18s ease;

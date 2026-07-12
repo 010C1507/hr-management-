@@ -85,7 +85,7 @@ const stars = [1, 2, 3, 4, 5]
 .stars {
   display: flex;
   gap: 6px;
-  color: rgba(255, 255, 255, 0.35);
+  color: #cbd5e1;
   justify-content: flex-start;
   padding-left: 4px;
 }

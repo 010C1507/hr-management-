@@ -41,20 +41,23 @@ defineProps({
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 26px 32px 10px;
+  padding: 20px 32px 14px;
+  border-bottom: 1px solid var(--border-color);
+  background: #ffffff;
   flex-wrap: wrap;
 }
 
 .welcome h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 600;
-  color: var(--text-on-dark);
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
 .welcome h1 span {
   font-weight: 700;
+  color: #1a3f7a;
 }
 
 .task-progress {
@@ -68,20 +71,20 @@ defineProps({
 
 .bar {
   flex: 1;
-  height: 8px;
+  height: 7px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.28);
+  background: #dde6f5;
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
   border-radius: 8px;
-  background: var(--accent-yellow);
+  background: #1a3f7a;
 }
 
 .fraction {
-  color: var(--text-on-dark-soft);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
@@ -90,40 +93,42 @@ defineProps({
 .actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   margin-left: auto;
 }
 
 .icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  border: none;
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--text-on-dark);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.18s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: #dde6f5;
+  border-color: #b8cef0;
+  color: #1a3f7a;
 }
 
 .avatar {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #f4a95c;
   color: #fff;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  border: 2px solid var(--border-color);
 }
 
 @media (max-width: 720px) {

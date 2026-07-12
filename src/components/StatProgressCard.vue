@@ -23,7 +23,7 @@ defineProps({
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: 18px 20px;
-  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-soft);
 }
 
 .stat-value {
@@ -44,7 +44,7 @@ defineProps({
   margin-top: 12px;
   height: 7px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.28);
+  background: #dde6f5;
   overflow: hidden;
 }
 

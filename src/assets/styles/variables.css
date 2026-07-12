@@ -1,44 +1,53 @@
 :root {
-  /* Backdrop gradient (page background) */
-  --backdrop-gradient: linear-gradient(135deg, #dcf3e6 0%, #cfe6f2 35%, #b9c3ee 70%, #9fb0e8 100%);
+  /* Sidebar — stays dark navy */
+  --sidebar-gradient: linear-gradient(180deg, #162d50 0%, #1a4882 55%, #1e6ec8 100%);
 
-  /* Main card gradient */
-  --card-gradient: linear-gradient(135deg, #5b7ff0 0%, #7b7bec 45%, #9b8de8 75%, #ab97e6 100%);
+  /* Page shell backgrounds */
+  --card-gradient: #f0f5ff;
+  --content-bg: #ffffff;
+  --surface-bg: #f4f8ff;
+  --backdrop-gradient: #f0f5ff;
 
-  /* Sidebar gradient */
-  --sidebar-gradient: linear-gradient(180deg, #6a6fda 0%, #857de0 55%, #9a86e4 100%);
+  /* Card / panel surface */
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #f8faff;
+  --glass-border: #dde6f5;
 
-  /* Glass panel */
-  --glass-bg: rgba(255, 255, 255, 0.14);
-  --glass-bg-strong: rgba(255, 255, 255, 0.22);
-  --glass-border: rgba(255, 255, 255, 0.28);
+  /* Accent palette */
+  --accent-green: #22c55e;
+  --accent-blue: #3b82f6;
+  --accent-yellow: #f59e0b;
+  --accent-orange: #f97316;
+  --accent-purple: #8b5cf6;
+  --accent-red: #ef4444;
 
-  /* Accent palette (tag / legend dots) */
-  --accent-green: #3ecf8e;
-  --accent-blue: #8ec1f4;
-  --accent-yellow: #e3ef6c;
-  --accent-orange: #f4977a;
-  --accent-purple: #b0a3ec;
-
-  /* Text */
+  /* Text on sidebar (dark bg) — keep white */
   --text-on-dark: #ffffff;
   --text-on-dark-soft: rgba(255, 255, 255, 0.72);
-  --text-on-dark-faint: rgba(255, 255, 255, 0.45);
-  --text-dark: #2c2a4a;
+  --text-on-dark-faint: rgba(255, 255, 255, 0.42);
 
-  /* CTA */
-  --cta-bg: #3f4fbd;
-  --cta-bg-hover: #4959d0;
+  /* Text on content area (light bg) */
+  --text-dark: #1e293b;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  /* CTA — dark navy blue */
+  --cta-bg: #1a3f7a;
+  --cta-bg-hover: #163267;
+
+  /* Border */
+  --border-color: #e2e8f0;
 
   /* Radii */
   --radius-xl: 32px;
-  --radius-lg: 24px;
-  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
   --radius-sm: 10px;
 
   /* Shadows */
-  --shadow-card: 0 30px 60px -20px rgba(43, 45, 110, 0.45);
-  --shadow-soft: 0 10px 30px -12px rgba(43, 45, 110, 0.3);
+  --shadow-card: 0 4px 24px -4px rgba(30, 58, 138, 0.10);
+  --shadow-soft: 0 2px 12px -2px rgba(30, 58, 138, 0.08);
 
   font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }

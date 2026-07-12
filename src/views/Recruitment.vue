@@ -563,14 +563,16 @@ onMounted(loadCandidates)
   margin: 0 0 16px;
   padding: 10px 16px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--text-on-dark-soft);
+  background: #eff6ff;
+  color: var(--text-secondary);
   font-size: 13px;
+  border: 1px solid #bfdbfe;
 }
 
 .notice--error {
-  background: rgba(244, 151, 122, 0.25);
-  color: #fff;
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
 }
 
 .add-form {
@@ -590,21 +592,27 @@ onMounted(loadCandidates)
 
 .field label {
   font-size: 12.5px;
-  color: var(--text-on-dark-soft);
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .field input {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--text-on-dark);
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-primary);
   font-size: 13.5px;
 }
 
+.field input:focus {
+  outline: none;
+  border-color: #1a3f7a;
+  background: #fff;
+}
+
 .field input::placeholder {
-  color: var(--text-on-dark-faint);
+  color: var(--text-muted);
 }
 
 .stat-row {
@@ -637,7 +645,7 @@ onMounted(loadCandidates)
 }
 
 .funnel-step:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: #e8effa;
 }
 
 .funnel-step.active {
@@ -673,11 +681,11 @@ onMounted(loadCandidates)
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid var(--glass-border);
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 9px 14px;
-  color: var(--text-on-dark-soft);
+  color: var(--text-secondary);
   flex: 1;
   min-width: 200px;
 }
@@ -686,13 +694,13 @@ onMounted(loadCandidates)
   border: none;
   background: transparent;
   outline: none;
-  color: var(--text-on-dark);
+  color: var(--text-primary);
   font-size: 13.5px;
   width: 100%;
 }
 
 .search input::placeholder {
-  color: var(--text-on-dark-faint);
+  color: var(--text-muted);
 }
 
 .status-tabs {
@@ -702,19 +710,20 @@ onMounted(loadCandidates)
 }
 
 .tab {
-  border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-on-dark-soft);
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-secondary);
   font-size: 12.5px;
   font-weight: 600;
   padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .tab:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #dde6f5;
+  color: var(--text-primary);
 }
 
 .tab.active {
@@ -724,23 +733,23 @@ onMounted(loadCandidates)
 }
 
 .dept-select {
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid var(--glass-border);
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 9px 12px;
-  color: var(--text-on-dark);
+  color: var(--text-primary);
   font-size: 13px;
   max-width: 280px;
 }
 
 .dept-select option {
-  color: #2c2a4a;
+  color: var(--text-primary);
 }
 
 /* ---------- แถวผู้สมัคร ---------- */
 
 .cand-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .cand-row:last-child {
@@ -763,7 +772,7 @@ onMounted(loadCandidates)
 }
 
 .cand-summary:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: #f4f8ff;
 }
 
 .cand-name {
@@ -786,12 +795,12 @@ onMounted(loadCandidates)
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  background: #dde6f5;
 }
 
 .dot.current {
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+  background: #1a3f7a;
+  box-shadow: 0 0 0 3px rgba(26, 63, 122, 0.2);
 }
 
 .dot.stopped {
@@ -835,7 +844,8 @@ onMounted(loadCandidates)
 
 .cand-detail {
   padding: 4px 18px 18px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-bg);
+  border-top: 1px solid var(--border-color);
 }
 
 .detail-meta {
@@ -889,21 +899,21 @@ onMounted(loadCandidates)
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-on-dark-soft);
+  color: var(--text-muted);
   font-weight: 700;
   padding: 8px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .stage-table td {
   padding: 8px 10px;
   font-size: 12.5px;
-  color: var(--text-on-dark);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-bottom: 1px solid #f0f5ff;
 }
 
 .stage-table td.over {
-  color: #ffb3b3;
+  color: #dc2626;
   font-weight: 700;
 }
 

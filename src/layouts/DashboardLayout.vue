@@ -29,12 +29,22 @@ import AppHeader from '../components/AppHeader.vue'
   min-width: 0;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+
+  /* Remap dark variables → light for all content-area children */
+  --text-on-dark: #1e293b;
+  --text-on-dark-soft: #64748b;
+  --text-on-dark-faint: #94a3b8;
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #f8faff;
+  --glass-border: #dde6f5;
 }
 
 .content {
   flex: 1;
   padding: 20px 32px 32px;
   overflow: auto;
+  background: var(--card-gradient);
 }
 
 @media (max-width: 640px) {

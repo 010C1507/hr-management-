@@ -12,8 +12,8 @@ body {
 }
 
 body {
-  background: var(--backdrop-gradient);
-  color: var(--text-dark);
+  background: var(--card-gradient);
+  color: var(--text-primary);
   font-family: 'Poppins', 'Noto Sans Thai', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -37,20 +37,20 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.35);
+  background: #c7d8f0;
   border-radius: 8px;
 }
 
-/* Shared "app shell" elements reused across HR pages */
-
+/* Shared card / panel */
 .data-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
+/* Shared table */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -58,55 +58,63 @@ a {
 
 .data-table th {
   text-align: left;
-  font-size: 12px;
+  font-size: 11.5px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-on-dark-soft);
-  font-weight: 600;
-  padding: 14px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 700;
+  padding: 13px 18px;
+  background: var(--surface-bg);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .data-table td {
-  padding: 14px 18px;
-  font-size: 14px;
-  color: var(--text-on-dark);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 13px 18px;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  border-bottom: 1px solid #f0f5ff;
 }
 
 .data-table tr:last-child td {
   border-bottom: none;
 }
 
+.data-table tbody tr:hover td {
+  background: #f8faff;
+}
+
+/* Status pills — light colored on light bg */
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 5px 12px;
+  gap: 6px;
+  padding: 4px 11px;
   border-radius: 999px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.18);
-  color: var(--text-on-dark);
   white-space: nowrap;
   flex-shrink: 0;
+  background: #f1f5ff;
+  color: var(--text-secondary);
 }
 
 .pill::before {
   content: '';
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--dot-color, currentColor);
+  background: var(--dot-color, var(--text-muted));
   flex-shrink: 0;
 }
 
-.pill--green { --dot-color: var(--accent-green); }
-.pill--blue { --dot-color: var(--accent-blue); }
-.pill--yellow { --dot-color: #eef27a; }
-.pill--orange { --dot-color: var(--accent-orange); }
-.pill--purple { --dot-color: var(--accent-purple); }
+.pill--green  { background: #f0fdf4; color: #15803d; --dot-color: #22c55e; }
+.pill--blue   { background: #eff6ff; color: #1d4ed8; --dot-color: #3b82f6; }
+.pill--yellow { background: #fffbeb; color: #b45309; --dot-color: #f59e0b; }
+.pill--orange { background: #fff7ed; color: #c2410c; --dot-color: #f97316; }
+.pill--purple { background: #faf5ff; color: #6d28d9; --dot-color: #8b5cf6; }
+.pill--red    { background: #fef2f2; color: #dc2626; --dot-color: #ef4444; }
 
+/* Buttons */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -119,7 +127,7 @@ a {
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background 0.18s ease, transform 0.18s ease;
+  transition: background 0.18s ease, transform 0.15s ease;
 }
 
 .btn-primary:hover {
@@ -131,21 +139,23 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--text-on-dark);
+  background: var(--surface-bg);
+  color: var(--text-secondary);
   font-weight: 600;
   font-size: 13.5px;
   padding: 10px 16px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background 0.18s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.26);
+  background: #e8effa;
+  border-color: #b8cef0;
 }
 
+/* Avatar chip */
 .avatar-chip {
   width: 34px;
   height: 34px;
@@ -155,10 +165,11 @@ a {
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
-  color: #16324a;
+  color: #1e3a5f;
   flex-shrink: 0;
 }
 
+/* Stat grid */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));

@@ -241,11 +241,11 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid var(--glass-border);
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 9px 14px;
-  color: var(--text-on-dark-soft);
+  color: var(--text-secondary);
   flex: 1;
   min-width: 200px;
 }
@@ -254,13 +254,13 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
   border: none;
   background: transparent;
   outline: none;
-  color: var(--text-on-dark);
+  color: var(--text-primary);
   font-size: 13.5px;
   width: 100%;
 }
 
 .search input::placeholder {
-  color: var(--text-on-dark-faint);
+  color: var(--text-muted);
 }
 
 .status-tabs {
@@ -270,19 +270,20 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
 }
 
 .tab {
-  border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-on-dark-soft);
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-secondary);
   font-size: 12.5px;
   font-weight: 600;
   padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .tab:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #dde6f5;
+  color: var(--text-primary);
 }
 
 .tab.active {
@@ -292,16 +293,16 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
 }
 
 .dept-select {
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid var(--glass-border);
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 9px 12px;
-  color: var(--text-on-dark);
+  color: var(--text-primary);
   font-size: 13px;
 }
 
 .dept-select option {
-  color: #2c2a4a;
+  color: var(--text-primary);
 }
 
 .legend-row {
@@ -336,7 +337,7 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
 
 .header-block {
   display: flex;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header-info {
@@ -345,8 +346,8 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
   position: sticky;
   left: 0;
   z-index: 3;
-  background: rgba(90, 84, 176, 0.65);
-  backdrop-filter: blur(8px);
+  background: var(--surface-bg);
+  border-right: 1px solid var(--border-color);
 }
 
 .header-timeline {
@@ -365,7 +366,7 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
 
 .week-row {
   height: 26px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid var(--border-color);
 }
 
 .month-cell {
@@ -374,8 +375,8 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-on-dark);
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  border-left: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -384,15 +385,15 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
   align-items: center;
   justify-content: center;
   font-size: 11px;
-  color: var(--text-on-dark-soft);
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  border-left: 1px solid #eef2fb;
   flex-shrink: 0;
 }
 
 .week-cell.current {
-  color: var(--text-on-dark);
+  color: #1a3f7a;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(26, 63, 122, 0.06);
 }
 
 .info-cell {
@@ -440,7 +441,7 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
 
 .body-row {
   display: flex;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .body-row:last-of-type {
@@ -453,8 +454,8 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
   position: sticky;
   left: 0;
   z-index: 2;
-  background: rgba(90, 84, 176, 0.55);
-  backdrop-filter: blur(8px);
+  background: #ffffff;
+  border-right: 1px solid var(--border-color);
 }
 
 .row-timeline {
@@ -462,8 +463,8 @@ const markerLeftPx = todayOffset === null ? null : todayOffset * WEEK_COL
   flex-shrink: 0;
   background-image: repeating-linear-gradient(
     to right,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.06) 1px,
+    #dde6f5,
+    #dde6f5 1px,
     transparent 1px,
     transparent v-bind('WEEK_COL + "px"')
   );

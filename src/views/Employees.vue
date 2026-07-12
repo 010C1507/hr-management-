@@ -190,14 +190,16 @@ onMounted(loadEmployees)
   margin: 0 0 16px;
   padding: 10px 16px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--text-on-dark-soft);
+  background: #eff6ff;
+  color: var(--text-secondary);
   font-size: 13px;
+  border: 1px solid #bfdbfe;
 }
 
 .notice--error {
-  background: rgba(244, 151, 122, 0.25);
-  color: #fff;
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
 }
 
 .add-form {
@@ -217,7 +219,7 @@ onMounted(loadEmployees)
 
 .field label {
   font-size: 12.5px;
-  color: var(--text-on-dark-soft);
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -225,17 +227,24 @@ onMounted(loadEmployees)
 .field select {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--text-on-dark);
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-primary);
   font-size: 13.5px;
 }
 
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: #1a3f7a;
+  background: #fff;
+}
+
 .field input::placeholder {
-  color: var(--text-on-dark-faint);
+  color: var(--text-muted);
 }
 
 .field select option {
-  color: #2c2a4a;
+  color: var(--text-primary);
 }
 </style>
