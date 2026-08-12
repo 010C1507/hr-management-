@@ -353,6 +353,78 @@ async function stopCandidate(c, result) {
   await loadCandidates()
 }
 
+// สามารถย้อนกลับได้เมื่อ: อยู่กลางกระบวนการและผ่านขั้นแรกไปแล้ว หรือกระบวนการถูกปิดไปแล้ว (เข้างาน/ไม่ผ่าน/ถอนตัว)
+function canRevert(c) {
+  if (c.status === 'in_progress') return c.stages.length > 1
+  return true
+}
+
+async function revertStage(c) {
+  if (!canRevert(c)) return
+  const last = lastStageEntry(c)
+  if (!last) return
+  if (!window.confirm('ยืนยันการย้อนกลับไปขั้นตอนก่อนหน้า?')) return
+
+  errorMessage.value = ''
+
+  // กรณีสถานะปิดแล้ว (เข้างาน/ไม่ผ่าน/ถอนตัว): เปิดกลับมาเป็นกำลังดำเนินการ แล้วเคลียร์ผลของขั้นล่าสุด
+  if (c.status !== 'in_progress') {
+    if (!isSupabaseConfigured) {
+      last.end = null
+      last.result = 'รอดำเนินการ'
+      c.status = 'in_progress'
+      return
+    }
+    const { error: updError } = await supabase
+      .from('candidate_stages')
+      .update({ end_date: null, result: 'รอดำเนินการ' })
+      .eq('candidate_id', c.id)
+      .eq('stage_key', last.key)
+    if (updError) {
+      errorMessage.value = 'ย้อนกลับไม่สำเร็จ: ' + updError.message
+      return
+    }
+    const { error: statusError } = await supabase
+      .from('candidates')
+      .update({ status: 'in_progress' })
+      .eq('id', c.id)
+    if (statusError) {
+      errorMessage.value = 'ย้อนกลับไม่สำเร็จ: ' + statusError.message
+      return
+    }
+    await loadCandidates()
+    return
+  }
+
+  // กรณีกำลังดำเนินการ: ลบขั้นปัจจุบัน (ที่ถูกสร้างเมื่อกดผ่านขั้นก่อนหน้า) แล้วเปิดขั้นก่อนหน้ากลับมา
+  const prev = c.stages[c.stages.length - 2]
+  if (!isSupabaseConfigured) {
+    c.stages.pop()
+    prev.end = null
+    prev.result = 'รอดำเนินการ'
+    return
+  }
+  const { error: delError } = await supabase
+    .from('candidate_stages')
+    .delete()
+    .eq('candidate_id', c.id)
+    .eq('stage_key', last.key)
+  if (delError) {
+    errorMessage.value = 'ย้อนกลับไม่สำเร็จ: ' + delError.message
+    return
+  }
+  const { error: prevError } = await supabase
+    .from('candidate_stages')
+    .update({ end_date: null, result: 'รอดำเนินการ' })
+    .eq('candidate_id', c.id)
+    .eq('stage_key', prev.key)
+  if (prevError) {
+    errorMessage.value = 'ย้อนกลับไม่สำเร็จ: ' + prevError.message
+    return
+  }
+  await loadCandidates()
+}
+
 onMounted(loadCandidates)
 </script>
 
@@ -541,13 +613,25 @@ onMounted(loadCandidates)
               </tbody>
             </table>
 
-            <div v-if="c.status === 'in_progress'" class="detail-actions">
-              <button class="btn-primary" type="button" @click="advanceStage(c)">
-                <AppIcon name="check" :size="15" />
-                ผ่านขั้นตอนนี้{{ lastStageEntry(c) && pipelineIndex(lastStageEntry(c).key) < PIPELINE.length - 1 ? ' → ' + PIPELINE[pipelineIndex(lastStageEntry(c).key) + 1].label : ' (จบกระบวนการ)' }}
+            <div class="detail-actions">
+              <template v-if="c.status === 'in_progress'">
+                <button class="btn-primary" type="button" @click="advanceStage(c)">
+                  <AppIcon name="check" :size="15" />
+                  ผ่านขั้นตอนนี้{{ lastStageEntry(c) && pipelineIndex(lastStageEntry(c).key) < PIPELINE.length - 1 ? ' → ' + PIPELINE[pipelineIndex(lastStageEntry(c).key) + 1].label : ' (จบกระบวนการ)' }}
+                </button>
+                <button class="btn-ghost" type="button" @click="stopCandidate(c, 'ไม่ผ่าน')">ไม่ผ่าน</button>
+                <button class="btn-ghost" type="button" @click="stopCandidate(c, 'ถอนตัว')">ผู้สมัครถอนตัว</button>
+              </template>
+              <button
+                v-if="canRevert(c)"
+                class="btn-ghost btn-revert"
+                type="button"
+                @click="revertStage(c)"
+                :title="c.status === 'in_progress' ? 'ย้อนกลับไปขั้นตอนก่อนหน้า' : 'ย้อนกลับเป็นกำลังดำเนินการ'"
+              >
+                <AppIcon name="chevronRight" :size="14" class="revert-arrow" />
+                ย้อนกลับขั้นตอนก่อนหน้า
               </button>
-              <button class="btn-ghost" type="button" @click="stopCandidate(c, 'ไม่ผ่าน')">ไม่ผ่าน</button>
-              <button class="btn-ghost" type="button" @click="stopCandidate(c, 'ถอนตัว')">ผู้สมัครถอนตัว</button>
             </div>
           </div>
         </div>
@@ -929,6 +1013,18 @@ onMounted(loadCandidates)
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.btn-revert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: var(--text-secondary);
+}
+
+.revert-arrow {
+  transform: rotate(180deg);
 }
 
 .empty {
