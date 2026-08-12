@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import PageHeader from '../components/PageHeader.vue'
 import AppIcon from '../components/AppIcon.vue'
 import StatIconCard from '../components/StatIconCard.vue'
@@ -16,6 +16,7 @@ const saving = ref(false)
 const searchQuery = ref('')
 const statusFilter = ref('all')
 const departmentFilter = ref('all')
+const yearFilter = ref('all')
 const stageFilter = ref(null)
 
 const form = ref({
@@ -102,11 +103,27 @@ function stageDotState(c, key) {
   return 'pending'
 }
 
-const departments = computed(() => Array.from(new Set(candidates.value.map((c) => c.department))))
+// ปีที่รับเรื่อง/ขออัตรา (ขั้นตอนแรกของผู้สมัครแต่ละคน) ใช้อ้างอิงเป็น "ปี" ของผู้สมัครคนนั้น
+function candidateYear(c) {
+  const first = c.stages[0]
+  return first ? new Date(first.start).getFullYear() : null
+}
+
+const years = computed(() =>
+  Array.from(new Set(candidates.value.map(candidateYear).filter((y) => y != null))).sort((a, b) => b - a)
+)
+
+const yearCandidates = computed(() => {
+  if (yearFilter.value === 'all') return candidates.value
+  const y = Number(yearFilter.value)
+  return candidates.value.filter((c) => candidateYear(c) === y)
+})
+
+const departments = computed(() => Array.from(new Set(yearCandidates.value.map((c) => c.department))))
 
 const filteredCandidates = computed(() => {
   const q = searchQuery.value.trim().toLowerCase()
-  return candidates.value.filter((c) => {
+  return yearCandidates.value.filter((c) => {
     if (statusFilter.value !== 'all' && c.status !== statusFilter.value) return false
     if (departmentFilter.value !== 'all' && c.department !== departmentFilter.value) return false
     if (stageFilter.value) {
@@ -119,7 +136,7 @@ const filteredCandidates = computed(() => {
 })
 
 const stats = computed(() => {
-  const all = candidates.value
+  const all = yearCandidates.value
   const onboarded = all.filter((c) => c.status === 'onboard')
   const avgDays = onboarded.length
     ? Math.round(onboarded.reduce((sum, c) => sum + totalDaysOf(c), 0) / onboarded.length)
@@ -139,8 +156,8 @@ const funnel = computed(() =>
     ...p,
     count:
       p.key === 'onboard'
-        ? candidates.value.filter((c) => c.status === 'onboard').length
-        : candidates.value.filter((c) => {
+        ? yearCandidates.value.filter((c) => c.status === 'onboard').length
+        : yearCandidates.value.filter((c) => {
             if (c.status !== 'in_progress') return false
             const cur = currentStageOf(c)
             return cur && cur.key === p.key
@@ -425,6 +442,10 @@ async function revertStage(c) {
   await loadCandidates()
 }
 
+watch(yearFilter, () => {
+  departmentFilter.value = 'all'
+})
+
 onMounted(loadCandidates)
 </script>
 
@@ -520,6 +541,10 @@ onMounted(loadCandidates)
           {{ tab.label }}
         </button>
       </div>
+      <select v-model="yearFilter" class="dept-select">
+        <option value="all">ทุกปี</option>
+        <option v-for="y in years" :key="y" :value="y">ปี {{ y }}</option>
+      </select>
       <select v-model="departmentFilter" class="dept-select">
         <option value="all">ทุกฝ่าย</option>
         <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
