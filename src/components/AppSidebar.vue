@@ -6,13 +6,10 @@ const route = useRoute()
 
 const menu = [
   { to: '/', label: 'แดชบอร์ด', icon: 'home' },
-  { to: '/employees', label: 'พนักงาน', icon: 'users' },
-  { to: '/recruitment', label: 'สรรหาบุคลากร', icon: 'search' },
-  { to: '/onboarding', label: 'รับพนักงานใหม่', icon: 'briefcase' },
-  { to: '/attendance', label: 'เวลาเข้า-ออกงาน', icon: 'clock' },
-  { to: '/leave', label: 'การลา', icon: 'calendar' },
-  { to: '/payroll', label: 'เงินเดือน', icon: 'wallet' },
-  { to: '/reports', label: 'รายงาน', icon: 'chart' },
+  { to: '/members', label: 'สมาชิกครอบครัว', icon: 'users' },
+  { to: '/growth', label: 'พัฒนาการลูก', icon: 'heart' },
+  { to: '/insurance', label: 'ประกัน', icon: 'shield' },
+  { to: '/welfare', label: 'สวัสดิการ', icon: 'gift' },
 ]
 
 const bottomMenu = [{ to: '/settings', label: 'ตั้งค่า', icon: 'settings' }]
@@ -21,7 +18,7 @@ const bottomMenu = [{ to: '/settings', label: 'ตั้งค่า', icon: 'se
 <template>
   <aside class="sidebar">
     <div class="brand">
-      <span class="brand-mark">H</span>
+      <span class="brand-mark">F</span>
     </div>
 
     <nav class="nav">

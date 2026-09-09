@@ -1,39 +1,81 @@
 <script setup>
-import AppIcon from '../components/AppIcon.vue'
-import StatusLegend from '../components/StatusLegend.vue'
+import { computed, onMounted, ref } from 'vue'
 import MascotCharacter from '../components/MascotCharacter.vue'
 import StatProgressCard from '../components/StatProgressCard.vue'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import {
+  familyMembers as mockMembers,
+  growthRecords as mockRecords,
+  insurancePolicies as mockPolicies,
+  welfareBenefits as mockBenefits,
+} from '../data/sample'
 
-const rating = 4
-const stars = [1, 2, 3, 4, 5]
+const members = ref([])
+const records = ref([])
+const policies = ref([])
+const benefits = ref([])
+
+const childCount = computed(() => members.value.filter((m) => m.relation === 'child').length)
+
+const latestChildGrowth = computed(() => {
+  const childIds = members.value.filter((m) => m.relation === 'child').map((m) => m.id)
+  const childRecords = records.value.filter((r) => childIds.includes(r.member_id))
+  return [...childRecords].sort((a, b) => new Date(b.record_date) - new Date(a.record_date))[0] || null
+})
+
+const latestChildName = computed(() => {
+  if (!latestChildGrowth.value) return ''
+  return members.value.find((m) => m.id === latestChildGrowth.value.member_id)?.full_name || ''
+})
+
+const activePolicies = computed(() => policies.value.filter((p) => p.status === 'active').length)
+const activeBenefits = computed(() => benefits.value.filter((b) => b.status === 'active').length)
+
+async function loadDashboard() {
+  if (!isSupabaseConfigured) {
+    members.value = mockMembers
+    records.value = mockRecords
+    policies.value = mockPolicies
+    benefits.value = mockBenefits
+    return
+  }
+
+  const [membersRes, recordsRes, policiesRes, benefitsRes] = await Promise.all([
+    supabase.from('family_members').select('*'),
+    supabase.from('growth_records').select('*'),
+    supabase.from('insurance_policies').select('*'),
+    supabase.from('welfare_benefits').select('*'),
+  ])
+
+  if (!membersRes.error) members.value = membersRes.data
+  if (!recordsRes.error) records.value = recordsRes.data
+  if (!policiesRes.error) policies.value = policiesRes.data
+  if (!benefitsRes.error) benefits.value = benefitsRes.data
+}
+
+onMounted(loadDashboard)
 </script>
 
 <template>
   <section class="dashboard">
     <div class="grid">
-      <StatusLegend />
-
       <div class="hero">
         <MascotCharacter />
-        <h2>คุณมีสถิติการทำงานที่ดีเยี่ยมในเดือนนี้!</h2>
-        <p>ระบบสรุปการเข้างาน ผลปฏิบัติงาน และคำขอลาของคุณไว้ที่นี่</p>
+        <h2>ยินดีต้อนรับสู่ Family Tracker!</h2>
+        <p>ติดตามสมาชิกครอบครัว พัฒนาการของลูก ประกัน และสวัสดิการทั้งหมดไว้ที่เดียว</p>
       </div>
 
       <div class="side">
-        <div class="stars">
-          <AppIcon
-            v-for="n in stars"
-            :key="n"
-            name="star"
-            :size="20"
-            :class="{ filled: n <= rating }"
-          />
-        </div>
+        <StatProgressCard :value="members.length" label="สมาชิกในครอบครัว" percent="80" color="var(--accent-blue)" />
+        <StatProgressCard :value="childCount" label="ลูกที่ติดตามพัฒนาการ" percent="60" color="var(--accent-green)" />
+        <StatProgressCard :value="activePolicies" label="กรมธรรม์ที่คุ้มครองอยู่" percent="65" color="var(--accent-yellow)" />
+        <StatProgressCard :value="activeBenefits" label="สวัสดิการที่ใช้งานอยู่" percent="55" color="var(--accent-orange)" />
 
-        <StatProgressCard value="163" label="ชั่วโมงทำงานเดือนนี้" percent="72" color="var(--accent-yellow)" />
-        <StatProgressCard value="12" label="วันลาคงเหลือ" percent="35" color="var(--accent-orange)" />
+        <p v-if="latestChildGrowth" class="latest-note">
+          บันทึกล่าสุด: {{ latestChildName }} — {{ latestChildGrowth.weight_kg }} กก. / {{ latestChildGrowth.height_cm }} ซม. ({{ latestChildGrowth.record_date }})
+        </p>
 
-        <router-link to="/attendance" class="cta">เช็คอินตอนนี้</router-link>
+        <router-link to="/growth" class="cta">บันทึกพัฒนาการลูก</router-link>
       </div>
     </div>
   </section>
@@ -46,7 +88,7 @@ const stars = [1, 2, 3, 4, 5]
 
 .grid {
   display: grid;
-  grid-template-columns: 76px 1fr 260px;
+  grid-template-columns: 1fr 320px;
   gap: 24px;
   align-items: center;
   min-height: 560px;
@@ -82,16 +124,14 @@ const stars = [1, 2, 3, 4, 5]
   gap: 16px;
 }
 
-.stars {
-  display: flex;
-  gap: 6px;
-  color: #cbd5e1;
-  justify-content: flex-start;
-  padding-left: 4px;
-}
-
-.stars .filled {
-  color: var(--accent-yellow);
+.latest-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-on-dark-soft);
+  font-size: 12.5px;
 }
 
 .cta {
