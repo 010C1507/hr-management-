@@ -101,6 +101,10 @@ declare
   id_child2 uuid;
   id_father uuid;
   id_mother uuid;
+  id_gf_paternal uuid;
+  id_gm_paternal uuid;
+  id_gf_maternal uuid;
+  id_gm_maternal uuid;
 begin
   if not exists (select 1 from family_members where full_name = 'เอกชัย ชาวราช') then
     insert into family_members (full_name, relation, gender, birth_date) values
@@ -115,22 +119,46 @@ begin
       ('สมชาย ชาวราช', 'father', 'male', '1962-01-05') returning id into id_father;
     insert into family_members (full_name, relation, gender, birth_date) values
       ('สมศรี ชาวราช', 'mother', 'female', '1964-06-22') returning id into id_mother;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('สมพงษ์ ชาวราช', 'grandfather_paternal', 'male', '1938-03-10') returning id into id_gf_paternal;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('บุญมี ชาวราช', 'grandmother_paternal', 'female', '1941-09-18') returning id into id_gm_paternal;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('ประเสริฐ ใจงาม', 'grandfather_maternal', 'male', '1940-11-02') returning id into id_gf_maternal;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('ทองสุข ใจงาม', 'grandmother_maternal', 'female', '1943-05-27') returning id into id_gm_maternal;
 
-    insert into growth_records (member_id, record_date, weight_kg, height_cm) values
-      (id_child1, current_date - 180, 11.5, 82.0),
-      (id_child1, current_date - 90, 12.3, 85.5),
-      (id_child1, current_date, 13.0, 88.0),
-      (id_child2, current_date - 90, 5.8, 58.0),
-      (id_child2, current_date, 6.9, 63.5);
+    insert into growth_records (member_id, record_date, weight_kg, height_cm, note) values
+      (id_child1, current_date - 540, 9.8, 74.0, null),
+      (id_child1, current_date - 450, 10.4, 77.5, null),
+      (id_child1, current_date - 360, 10.9, 79.8, null),
+      (id_child1, current_date - 270, 11.2, 81.0, null),
+      (id_child1, current_date - 180, 11.5, 82.0, null),
+      (id_child1, current_date - 90, 12.3, 85.5, null),
+      (id_child1, current_date, 13.0, 88.0, 'ตรวจสุขภาพประจำปีที่คลินิกเด็ก'),
+      (id_child2, current_date - 275, 3.4, 50.5, 'แรกเกิด'),
+      (id_child2, current_date - 184, 5.0, 55.0, null),
+      (id_child2, current_date - 90, 5.8, 58.0, null),
+      (id_child2, current_date, 6.9, 63.5, 'ฉีดวัคซีนตามนัด');
 
     insert into insurance_policies (member_id, provider, policy_type, policy_number, coverage_amount, premium, start_date, end_date, status) values
       (id_self, 'เมืองไทยประกันชีวิต', 'life', 'LF-100234', 1000000, 18000, current_date - 200, current_date + 165, 'active'),
+      (id_spouse, 'ไทยประกันชีวิต', 'health', 'HL-330012', 500000, 15000, current_date - 220, current_date + 75, 'active'),
       (id_child1, 'AIA', 'health', 'HL-556677', 300000, 9500, current_date - 100, current_date + 265, 'active'),
-      (id_child2, 'AIA', 'health', 'HL-556699', 300000, 9500, current_date - 30, current_date + 335, 'active');
+      (id_child2, 'AIA', 'health', 'HL-556699', 300000, 9500, current_date - 30, current_date + 335, 'active'),
+      (id_father, 'กรุงไทย-แอกซ่า', 'health', 'HL-778821', 200000, 22000, current_date - 150, current_date + 400, 'active'),
+      (id_mother, 'กรุงไทย-แอกซ่า', 'health', 'HL-778822', 200000, 22000, current_date - 150, current_date + 400, 'active'),
+      (id_self, 'วิริยะประกันภัย', 'car', 'CR-991045', 800000, 12500, current_date - 550, current_date - 100, 'expired');
 
     insert into welfare_benefits (member_id, benefit_name, provider, benefit_type, amount, valid_until, status) values
       (id_self, 'สวัสดิการค่ารักษาพยาบาลพนักงาน', 'บริษัท ABC จำกัด', 'medical', 20000, current_date + 200, 'active'),
+      (id_spouse, 'สวัสดิการค่ารักษาพยาบาลพนักงาน', 'บริษัท XYZ จำกัด', 'medical', 15000, current_date + 200, 'active'),
       (id_child1, 'เงินสงเคราะห์บุตร ประกันสังคม', 'สำนักงานประกันสังคม', 'allowance', 800, current_date + 365, 'active'),
-      (id_child2, 'เงินสงเคราะห์บุตร ประกันสังคม', 'สำนักงานประกันสังคม', 'allowance', 800, current_date + 365, 'active');
+      (id_child2, 'เงินสงเคราะห์บุตร ประกันสังคม', 'สำนักงานประกันสังคม', 'allowance', 800, current_date + 365, 'active'),
+      (id_child1, 'ทุนการศึกษาอนุบาล', 'โรงเรียนอนุบาลรุ่งเรือง', 'education', 5000, current_date + 600, 'active'),
+      (id_father, 'บัตรสวัสดิการแห่งรัฐ', 'กระทรวงการคลัง', 'allowance', 300, current_date + 20, 'active'),
+      (id_mother, 'เบี้ยยังชีพผู้สูงอายุ', 'เทศบาลเมือง', 'allowance', 700, current_date + 115, 'active'),
+      (id_gf_paternal, 'เบี้ยยังชีพผู้สูงอายุ', 'เทศบาลเมือง', 'allowance', 1000, current_date + 115, 'active'),
+      (id_gm_paternal, 'สิทธิบัตรทอง 30 บาท', 'สำนักงานหลักประกันสุขภาพแห่งชาติ', 'medical', 0, current_date + 480, 'active');
   end if;
 end $$;
