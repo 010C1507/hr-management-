@@ -3,9 +3,9 @@ import PageHeader from '../components/PageHeader.vue'
 import AppIcon from '../components/AppIcon.vue'
 
 const profile = {
-  name: 'Mike Chawarat',
+  name: 'เอกชัย ชาวราช',
   email: 'eak.chawarat@gmail.com',
-  role: 'HR Administrator',
+  role: 'เจ้าของครอบครัว',
 }
 </script>
 
@@ -14,7 +14,7 @@ const profile = {
     <PageHeader title="ตั้งค่า" subtitle="จัดการโปรไฟล์และการตั้งค่าระบบ" />
 
     <div class="data-card profile-card">
-      <div class="avatar-lg">MC</div>
+      <div class="avatar-lg">EC</div>
       <div class="profile-info">
         <h3>{{ profile.name }}</h3>
         <p>{{ profile.role }}</p>
@@ -29,7 +29,7 @@ const profile = {
       <div class="option-row">
         <div>
           <h4>การแจ้งเตือนทางอีเมล</h4>
-          <p>รับการแจ้งเตือนคำขอลาและเงินเดือนทางอีเมล</p>
+          <p>รับการแจ้งเตือนประกันใกล้หมดอายุและสวัสดิการทางอีเมล</p>
         </div>
         <label class="switch">
           <input type="checkbox" checked />

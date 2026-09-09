@@ -1,136 +1,136 @@
--- HR Management demo schema
+-- Family Tracker demo schema
 -- วิธีใช้: เปิด Supabase Dashboard > SQL Editor > วางไฟล์นี้ทั้งหมด > Run
 
 create extension if not exists pgcrypto;
 
-create table if not exists employees (
-  id uuid primary key default gen_random_uuid(),
-  employee_code text unique not null,
-  full_name text not null,
-  role text not null,
-  department text not null,
-  status text not null default 'Active' check (status in ('Active', 'On Leave', 'Inactive')),
-  created_at timestamptz not null default now()
-);
-
-create table if not exists attendance (
-  id uuid primary key default gen_random_uuid(),
-  employee_id uuid not null references employees (id) on delete cascade,
-  work_date date not null default current_date,
-  check_in time,
-  check_out time,
-  status text not null default 'มาปกติ' check (status in ('มาปกติ', 'มาสาย', 'ลา', 'ขาดงาน')),
-  created_at timestamptz not null default now()
-);
-
-create table if not exists leave_requests (
-  id uuid primary key default gen_random_uuid(),
-  employee_id uuid not null references employees (id) on delete cascade,
-  leave_type text not null,
-  start_date date not null,
-  end_date date not null,
-  status text not null default 'รออนุมัติ' check (status in ('อนุมัติ', 'รออนุมัติ', 'ปฏิเสธ')),
-  created_at timestamptz not null default now()
-);
-
-create table if not exists payroll (
-  id uuid primary key default gen_random_uuid(),
-  employee_id uuid not null references employees (id) on delete cascade,
-  period date not null default date_trunc('month', current_date),
-  salary numeric(12, 2) not null,
-  bonus numeric(12, 2) not null default 0,
-  status text not null default 'รอดำเนินการ' check (status in ('จ่ายแล้ว', 'รอดำเนินการ')),
-  created_at timestamptz not null default now()
-);
-
--- ระบบติดตามการสรรหา (Recruitment Tracking)
-create table if not exists candidates (
+-- สมาชิกในครอบครัว (ตัวเอง, คู่สมรส, ลูก, พ่อแม่, ปู่ย่าตายาย ฯลฯ)
+create table if not exists family_members (
   id uuid primary key default gen_random_uuid(),
   full_name text not null,
-  phone text,
-  email text,
-  position text not null,
-  division text,
-  department text,
-  status text not null default 'in_progress' check (status in ('in_progress', 'onboard', 'failed', 'withdrawn')),
-  expected_salary numeric(12, 2),
-  offered_salary numeric(12, 2),
-  remark text,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists candidate_stages (
-  id uuid primary key default gen_random_uuid(),
-  candidate_id uuid not null references candidates (id) on delete cascade,
-  stage_key text not null check (stage_key in ('request', 'screening', 'interview', 'approval', 'offer', 'contract', 'onboard')),
-  start_date date not null,
-  end_date date,
-  result text not null default 'รอดำเนินการ' check (result in ('รอดำเนินการ', 'ผ่าน', 'ไม่ผ่าน', 'ถอนตัว')),
+  relation text not null check (
+    relation in (
+      'self', 'spouse', 'child',
+      'father', 'mother',
+      'grandfather_paternal', 'grandmother_paternal',
+      'grandfather_maternal', 'grandmother_maternal',
+      'other'
+    )
+  ),
+  gender text check (gender in ('male', 'female', 'other')),
+  birth_date date,
+  photo_url text,
   note text,
-  created_at timestamptz not null default now(),
-  unique (candidate_id, stage_key)
+  created_at timestamptz not null default now()
+);
+
+-- บันทึกการเติบโต (น้ำหนัก/ส่วนสูง) โดยเฉพาะสำหรับติดตามพัฒนาการของลูก
+create table if not exists growth_records (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null references family_members (id) on delete cascade,
+  record_date date not null default current_date,
+  weight_kg numeric(6, 2),
+  height_cm numeric(6, 2),
+  note text,
+  created_at timestamptz not null default now()
+);
+
+-- กรมธรรม์ประกันของสมาชิกแต่ละคน
+create table if not exists insurance_policies (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null references family_members (id) on delete cascade,
+  provider text not null,
+  policy_type text not null check (policy_type in ('life', 'health', 'accident', 'car', 'other')),
+  policy_number text,
+  coverage_amount numeric(12, 2),
+  premium numeric(12, 2),
+  start_date date,
+  end_date date,
+  status text not null default 'active' check (status in ('active', 'expired', 'cancelled')),
+  note text,
+  created_at timestamptz not null default now()
+);
+
+-- สวัสดิการ/สิทธิประโยชน์ของสมาชิกแต่ละคน (เช่น สวัสดิการบริษัท, สิทธิรัฐ, ทุนการศึกษา)
+create table if not exists welfare_benefits (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null references family_members (id) on delete cascade,
+  benefit_name text not null,
+  provider text,
+  benefit_type text not null default 'other' check (benefit_type in ('medical', 'education', 'allowance', 'other')),
+  amount numeric(12, 2),
+  valid_until date,
+  status text not null default 'active' check (status in ('active', 'used', 'expired')),
+  note text,
+  created_at timestamptz not null default now()
 );
 
 -- Row Level Security
-alter table employees enable row level security;
-alter table attendance enable row level security;
-alter table leave_requests enable row level security;
-alter table payroll enable row level security;
-alter table candidates enable row level security;
-alter table candidate_stages enable row level security;
+alter table family_members enable row level security;
+alter table growth_records enable row level security;
+alter table insurance_policies enable row level security;
+alter table welfare_benefits enable row level security;
 
 -- นโยบายสำหรับ "ทดลองใช้" เท่านั้น: เปิดให้ทุกคน (รวม anon key) อ่าน/เขียนได้
 -- ก่อนใช้งานจริงควรเปลี่ยนเป็นตรวจสอบ auth.uid() หรือ role ผู้ใช้แทน
-create policy "demo_select_employees" on employees for select using (true);
-create policy "demo_insert_employees" on employees for insert with check (true);
-create policy "demo_update_employees" on employees for update using (true);
-create policy "demo_delete_employees" on employees for delete using (true);
+create policy "demo_select_family_members" on family_members for select using (true);
+create policy "demo_insert_family_members" on family_members for insert with check (true);
+create policy "demo_update_family_members" on family_members for update using (true);
+create policy "demo_delete_family_members" on family_members for delete using (true);
 
-create policy "demo_select_attendance" on attendance for select using (true);
-create policy "demo_insert_attendance" on attendance for insert with check (true);
-create policy "demo_update_attendance" on attendance for update using (true);
+create policy "demo_select_growth_records" on growth_records for select using (true);
+create policy "demo_insert_growth_records" on growth_records for insert with check (true);
+create policy "demo_update_growth_records" on growth_records for update using (true);
+create policy "demo_delete_growth_records" on growth_records for delete using (true);
 
-create policy "demo_select_leave" on leave_requests for select using (true);
-create policy "demo_insert_leave" on leave_requests for insert with check (true);
-create policy "demo_update_leave" on leave_requests for update using (true);
+create policy "demo_select_insurance_policies" on insurance_policies for select using (true);
+create policy "demo_insert_insurance_policies" on insurance_policies for insert with check (true);
+create policy "demo_update_insurance_policies" on insurance_policies for update using (true);
+create policy "demo_delete_insurance_policies" on insurance_policies for delete using (true);
 
-create policy "demo_select_payroll" on payroll for select using (true);
-create policy "demo_insert_payroll" on payroll for insert with check (true);
-create policy "demo_update_payroll" on payroll for update using (true);
+create policy "demo_select_welfare_benefits" on welfare_benefits for select using (true);
+create policy "demo_insert_welfare_benefits" on welfare_benefits for insert with check (true);
+create policy "demo_update_welfare_benefits" on welfare_benefits for update using (true);
+create policy "demo_delete_welfare_benefits" on welfare_benefits for delete using (true);
 
-create policy "demo_select_candidates" on candidates for select using (true);
-create policy "demo_insert_candidates" on candidates for insert with check (true);
-create policy "demo_update_candidates" on candidates for update using (true);
-create policy "demo_delete_candidates" on candidates for delete using (true);
-
-create policy "demo_select_candidate_stages" on candidate_stages for select using (true);
-create policy "demo_insert_candidate_stages" on candidate_stages for insert with check (true);
-create policy "demo_update_candidate_stages" on candidate_stages for update using (true);
-create policy "demo_delete_candidate_stages" on candidate_stages for delete using (true);
-
--- Seed data ตัวอย่าง (ตรงกับ mock data เดิมในหน้าเว็บ)
-insert into employees (employee_code, full_name, role, department, status) values
-  ('EMP-001', 'มิเชล ชาวราช', 'UX Designer', 'Product', 'Active'),
-  ('EMP-002', 'ธนพล ศรีสุข', 'Backend Engineer', 'Engineering', 'Active'),
-  ('EMP-003', 'กมลชนก ใจดี', 'HR Specialist', 'People', 'On Leave'),
-  ('EMP-004', 'ปิยะดา รุ่งเรือง', 'Product Manager', 'Product', 'Active'),
-  ('EMP-005', 'อธิป มั่งมี', 'Accountant', 'Finance', 'Active'),
-  ('EMP-006', 'ศิริพร แสงทอง', 'QA Engineer', 'Engineering', 'Inactive')
-on conflict (employee_code) do nothing;
-
--- Seed ผู้สมัครตัวอย่าง (ข้อมูลสมมติ) พร้อมประวัติขั้นตอน
+-- Seed data ตัวอย่าง
 do $$
 declare
-  cand_id uuid;
+  id_self uuid;
+  id_spouse uuid;
+  id_child1 uuid;
+  id_child2 uuid;
+  id_father uuid;
+  id_mother uuid;
 begin
-  if not exists (select 1 from candidates where email = 'parinya.w@example.com') then
-    insert into candidates (full_name, phone, email, position, division, department, status, expected_salary, remark)
-    values ('ปริญญา วงศ์สว่าง', '081-000-0001', 'parinya.w@example.com', 'Data Engineer', 'สายงานเทคโนโลยี', 'ฝ่ายบริหารจัดการงานวิศวกรรมข้อมูล', 'in_progress', 85000, 'นัดสัมภาษณ์รอบผู้บริหารกลุ่ม')
-    returning id into cand_id;
+  if not exists (select 1 from family_members where full_name = 'เอกชัย ชาวราช') then
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('เอกชัย ชาวราช', 'self', 'male', '1990-04-12') returning id into id_self;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('พิมพ์ชนก ชาวราช', 'spouse', 'female', '1991-08-03') returning id into id_spouse;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('น้องภูมิ ชาวราช', 'child', 'male', '2021-02-15') returning id into id_child1;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('น้องใบตอง ชาวราช', 'child', 'female', '2023-11-20') returning id into id_child2;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('สมชาย ชาวราช', 'father', 'male', '1962-01-05') returning id into id_father;
+    insert into family_members (full_name, relation, gender, birth_date) values
+      ('สมศรี ชาวราช', 'mother', 'female', '1964-06-22') returning id into id_mother;
 
-    insert into candidate_stages (candidate_id, stage_key, start_date, end_date, result) values
-      (cand_id, 'request', current_date - 25, current_date - 23, 'ผ่าน'),
-      (cand_id, 'screening', current_date - 22, current_date - 18, 'ผ่าน'),
-      (cand_id, 'interview', current_date - 10, null, 'รอดำเนินการ');
+    insert into growth_records (member_id, record_date, weight_kg, height_cm) values
+      (id_child1, current_date - 180, 11.5, 82.0),
+      (id_child1, current_date - 90, 12.3, 85.5),
+      (id_child1, current_date, 13.0, 88.0),
+      (id_child2, current_date - 90, 5.8, 58.0),
+      (id_child2, current_date, 6.9, 63.5);
+
+    insert into insurance_policies (member_id, provider, policy_type, policy_number, coverage_amount, premium, start_date, end_date, status) values
+      (id_self, 'เมืองไทยประกันชีวิต', 'life', 'LF-100234', 1000000, 18000, current_date - 200, current_date + 165, 'active'),
+      (id_child1, 'AIA', 'health', 'HL-556677', 300000, 9500, current_date - 100, current_date + 265, 'active'),
+      (id_child2, 'AIA', 'health', 'HL-556699', 300000, 9500, current_date - 30, current_date + 335, 'active');
+
+    insert into welfare_benefits (member_id, benefit_name, provider, benefit_type, amount, valid_until, status) values
+      (id_self, 'สวัสดิการค่ารักษาพยาบาลพนักงาน', 'บริษัท ABC จำกัด', 'medical', 20000, current_date + 200, 'active'),
+      (id_child1, 'เงินสงเคราะห์บุตร ประกันสังคม', 'สำนักงานประกันสังคม', 'allowance', 800, current_date + 365, 'active'),
+      (id_child2, 'เงินสงเคราะห์บุตร ประกันสังคม', 'สำนักงานประกันสังคม', 'allowance', 800, current_date + 365, 'active');
   end if;
 end $$;

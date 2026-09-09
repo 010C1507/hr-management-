@@ -2,7 +2,7 @@
 import AppIcon from './AppIcon.vue'
 
 defineProps({
-  name: { type: String, default: 'Mike' },
+  name: { type: String, default: 'เอกชัย' },
   taskDone: { type: Number, default: 7 },
   taskTotal: { type: Number, default: 10 },
 })
@@ -31,7 +31,7 @@ defineProps({
       <router-link to="/" class="icon-btn" aria-label="หน้าแรก">
         <AppIcon name="home" :size="18" />
       </router-link>
-      <router-link to="/settings" class="avatar" aria-label="โปรไฟล์">MC</router-link>
+      <router-link to="/settings" class="avatar" aria-label="โปรไฟล์">EC</router-link>
     </div>
   </header>
 </template>
