@@ -19,6 +19,44 @@ create table if not exists family_members (
   gender text check (gender in ('male', 'female', 'other')),
   birth_date date,
   photo_url text,
+  nickname text,
+  blood_type text,
+  phone text,
+  email text,
+  address text,
+  occupation text,
+  allergies text,
+  chronic_conditions text,
+  hospital text,
+  hobbies text,
+  note text,
+  created_at timestamptz not null default now()
+);
+
+-- ประวัติการศึกษา
+create table if not exists education_history (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null references family_members (id) on delete cascade,
+  level text not null,
+  institution text not null,
+  field text,
+  start_year int,
+  end_year int,
+  status text not null default 'completed' check (status in ('studying', 'completed')),
+  note text,
+  created_at timestamptz not null default now()
+);
+
+-- ประวัติการรักษา / พบแพทย์
+create table if not exists medical_records (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null references family_members (id) on delete cascade,
+  record_date date not null default current_date,
+  hospital text,
+  doctor text,
+  diagnosis text not null,
+  treatment text,
+  cost numeric(12, 2),
   note text,
   created_at timestamptz not null default now()
 );
@@ -66,6 +104,8 @@ create table if not exists welfare_benefits (
 
 -- Row Level Security
 alter table family_members enable row level security;
+alter table education_history enable row level security;
+alter table medical_records enable row level security;
 alter table growth_records enable row level security;
 alter table insurance_policies enable row level security;
 alter table welfare_benefits enable row level security;
@@ -76,6 +116,16 @@ create policy "demo_select_family_members" on family_members for select using (t
 create policy "demo_insert_family_members" on family_members for insert with check (true);
 create policy "demo_update_family_members" on family_members for update using (true);
 create policy "demo_delete_family_members" on family_members for delete using (true);
+
+create policy "demo_select_education_history" on education_history for select using (true);
+create policy "demo_insert_education_history" on education_history for insert with check (true);
+create policy "demo_update_education_history" on education_history for update using (true);
+create policy "demo_delete_education_history" on education_history for delete using (true);
+
+create policy "demo_select_medical_records" on medical_records for select using (true);
+create policy "demo_insert_medical_records" on medical_records for insert with check (true);
+create policy "demo_update_medical_records" on medical_records for update using (true);
+create policy "demo_delete_medical_records" on medical_records for delete using (true);
 
 create policy "demo_select_growth_records" on growth_records for select using (true);
 create policy "demo_insert_growth_records" on growth_records for insert with check (true);
@@ -107,18 +157,24 @@ declare
   id_gm_maternal uuid;
 begin
   if not exists (select 1 from family_members where full_name = 'เอกชัย ชาวราช') then
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('เอกชัย ชาวราช', 'self', 'male', '1990-04-12') returning id into id_self;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('พิมพ์ชนก ชาวราช', 'spouse', 'female', '1991-08-03') returning id into id_spouse;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('น้องภูมิ ชาวราช', 'child', 'male', '2021-02-15') returning id into id_child1;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('น้องใบตอง ชาวราช', 'child', 'female', '2023-11-20') returning id into id_child2;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('สมชาย ชาวราช', 'father', 'male', '1962-01-05') returning id into id_father;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('สมศรี ชาวราช', 'mother', 'female', '1964-06-22') returning id into id_mother;
+    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('เอกชัย ชาวราช', 'self', 'male', '1990-04-12', 'เอก', 'O', '081-234-5678', 'eak@example.com', '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'Software Engineer บริษัท ABC จำกัด', '-', '-', 'โรงพยาบาลสินแพทย์', 'วิ่ง, ถ่ายภาพ, อ่านหนังสือ')
+      returning id into id_self;
+    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('พิมพ์ชนก ชาวราช', 'spouse', 'female', '1991-08-03', 'พิม', 'A', '089-876-5432', 'pim@example.com', '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักบัญชี บริษัท XYZ จำกัด', 'แพ้อาหารทะเล', '-', 'โรงพยาบาลสินแพทย์', 'ทำอาหาร, โยคะ')
+      returning id into id_spouse;
+    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('น้องภูมิ ชาวราช', 'child', 'male', '2021-02-15', 'ภูมิ', 'O', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักเรียนอนุบาล 2 โรงเรียนอนุบาลรุ่งเรือง', 'แพ้นมวัว (เล็กน้อย)', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ต่อเลโก้, วาดรูป, ว่ายน้ำ')
+      returning id into id_child1;
+    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('น้องใบตอง ชาวราช', 'child', 'female', '2023-11-20', 'ใบตอง', 'A', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'เนอสเซอรี่บ้านอุ่นรัก', '-', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ฟังเพลง, เล่นตุ๊กตา')
+      returning id into id_child2;
+    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('สมชาย ชาวราช', 'father', 'male', '1962-01-05', 'ชาย', 'B', '081-111-2222', null, '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'ข้าราชการบำนาญ', 'แพ้ยาเพนิซิลลิน', 'ความดันโลหิตสูง, เบาหวานชนิดที่ 2', 'โรงพยาบาลหาดใหญ่', 'ปลูกต้นไม้, ตกปลา')
+      returning id into id_father;
+    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('สมศรี ชาวราช', 'mother', 'female', '1964-06-22', 'ศรี', 'O', '081-333-4444', null, '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'แม่บ้าน', '-', 'ไขมันในเลือดสูง', 'โรงพยาบาลหาดใหญ่', 'ทำขนม, สวดมนต์')
+      returning id into id_mother;
     insert into family_members (full_name, relation, gender, birth_date) values
       ('สมพงษ์ ชาวราช', 'grandfather_paternal', 'male', '1938-03-10') returning id into id_gf_paternal;
     insert into family_members (full_name, relation, gender, birth_date) values
@@ -127,6 +183,21 @@ begin
       ('ประเสริฐ ใจงาม', 'grandfather_maternal', 'male', '1940-11-02') returning id into id_gf_maternal;
     insert into family_members (full_name, relation, gender, birth_date) values
       ('ทองสุข ใจงาม', 'grandmother_maternal', 'female', '1943-05-27') returning id into id_gm_maternal;
+
+    insert into education_history (member_id, level, institution, field, start_year, end_year, status) values
+      (id_self, 'ปริญญาโท', 'จุฬาลงกรณ์มหาวิทยาลัย', 'วิศวกรรมคอมพิวเตอร์', 2013, 2015, 'completed'),
+      (id_self, 'ปริญญาตรี', 'มหาวิทยาลัยเกษตรศาสตร์', 'วิศวกรรมคอมพิวเตอร์', 2008, 2012, 'completed'),
+      (id_self, 'มัธยมศึกษา', 'โรงเรียนหาดใหญ่วิทยาลัย', 'วิทย์-คณิต', 2002, 2008, 'completed'),
+      (id_spouse, 'ปริญญาตรี', 'มหาวิทยาลัยธรรมศาสตร์', 'บัญชี', 2009, 2013, 'completed'),
+      (id_child1, 'อนุบาล', 'โรงเรียนอนุบาลรุ่งเรือง', 'อนุบาล 2', 2025, null, 'studying'),
+      (id_child2, 'เตรียมอนุบาล', 'เนอสเซอรี่บ้านอุ่นรัก', null, 2025, null, 'studying');
+
+    insert into medical_records (member_id, record_date, hospital, doctor, diagnosis, treatment, cost) values
+      (id_child1, current_date - 20, 'โรงพยาบาลเด็กสมิติเวช', 'พญ.กมลรัตน์', 'ไข้หวัดใหญ่สายพันธุ์ A', 'ยาต้านไวรัส Oseltamivir 5 วัน + ยาลดไข้', 3200),
+      (id_child1, current_date - 120, 'โรงพยาบาลเด็กสมิติเวช', 'พญ.กมลรัตน์', 'ตรวจสุขภาพ + วัคซีน MMR เข็ม 2', 'ฉีดวัคซีนตามนัด', 1800),
+      (id_child2, current_date - 10, 'โรงพยาบาลเด็กสมิติเวช', 'นพ.ธีรพงษ์', 'วัคซีน DTP-HB-Hib เข็มกระตุ้น', 'ฉีดวัคซีนตามนัด', 2400),
+      (id_father, current_date - 35, 'โรงพยาบาลหาดใหญ่', 'นพ.วิชัย', 'ติดตามเบาหวาน + ความดัน', 'ปรับยา Metformin, ตรวจ HbA1c', 1500),
+      (id_self, current_date - 200, 'โรงพยาบาลสินแพทย์', 'นพ.ประวิทย์', 'ตรวจสุขภาพประจำปี', 'ผลปกติ แนะนำออกกำลังกายสม่ำเสมอ', 4500);
 
     insert into growth_records (member_id, record_date, weight_kg, height_cm, note) values
       (id_child1, current_date - 540, 9.8, 74.0, null),
