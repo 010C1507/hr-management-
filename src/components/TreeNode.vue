@@ -1,10 +1,13 @@
 <script setup>
-import { relationLabels } from '../data/sample'
+import AppIcon from './AppIcon.vue'
 
 defineProps({
   member: { type: Object, required: true },
+  relationLabel: { type: String, default: '' },
   highlight: { type: Boolean, default: false },
 })
+
+const emit = defineEmits(['focus', 'view'])
 
 function initials(name) {
   return name ? name.trim().split(' ').map((p) => p[0]).slice(0, 2).join('') : '-'
@@ -21,17 +24,30 @@ function ageLabel(birthDate) {
 </script>
 
 <template>
-  <button type="button" class="tree-node" :class="{ highlight }">
+  <div
+    class="tree-node"
+    :class="{ highlight }"
+    role="button"
+    tabindex="0"
+    :title="highlight ? 'มุมมองปัจจุบัน' : `มองจากมุมมองของ ${member.full_name}`"
+    @click="emit('focus')"
+    @keydown.enter.prevent="emit('focus')"
+    @keydown.space.prevent="emit('focus')"
+  >
     <img v-if="member.photo_url" class="node-avatar" :src="member.photo_url" :alt="member.full_name" />
     <span v-else class="node-avatar node-initials">{{ initials(member.full_name) }}</span>
     <span class="node-name">{{ member.full_name }}</span>
-    <span class="node-relation">{{ highlight ? 'ตัวคุณ' : relationLabels[member.relation] || member.relation }}</span>
+    <span class="node-relation">{{ relationLabel }}</span>
     <span v-if="member.birth_date" class="node-age">{{ ageLabel(member.birth_date) }}</span>
-  </button>
+    <button class="node-open" type="button" title="เปิดโปรไฟล์" @click.stop="emit('view')">
+      <AppIcon name="chevronRight" :size="14" />
+    </button>
+  </div>
 </template>
 
 <style scoped>
 .tree-node {
+  position: relative;
   width: 136px;
   padding: 12px 10px 10px;
   border-radius: 14px;
@@ -52,10 +68,15 @@ function ageLabel(birthDate) {
   box-shadow: 0 10px 24px rgba(26, 63, 122, 0.14);
 }
 
+.tree-node:focus-visible {
+  outline: 2px solid #1a3f7a;
+  outline-offset: 2px;
+}
+
 .tree-node.highlight {
   background: linear-gradient(135deg, #1a3f7a, #2d6bd6);
   border-color: transparent;
-  color: #fff;
+  cursor: default;
 }
 
 .node-avatar {
@@ -93,11 +114,41 @@ function ageLabel(birthDate) {
   background: #e8effa;
   padding: 2px 9px;
   border-radius: 999px;
+  text-align: center;
 }
 
 .node-age {
   font-size: 11px;
   color: var(--text-on-dark-faint);
+}
+
+.node-open {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.tree-node:hover .node-open,
+.tree-node:focus-within .node-open {
+  opacity: 1;
+}
+
+.node-open:hover {
+  background: #dde6f5;
+  color: #1a3f7a;
 }
 
 .highlight .node-name {
@@ -111,5 +162,12 @@ function ageLabel(birthDate) {
 
 .highlight .node-age {
   color: rgba(255, 255, 255, 0.8);
+}
+
+.highlight .node-open {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: transparent;
+  color: #1a3f7a;
 }
 </style>
