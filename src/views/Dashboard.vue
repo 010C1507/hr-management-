@@ -61,7 +61,7 @@ onMounted(loadDashboard)
     <div class="grid">
       <div class="hero">
         <MascotCharacter />
-        <h2>ยินดีต้อนรับสู่ Family Tracker!</h2>
+        <h2>ยินดีต้อนรับสู่ Household Registry!</h2>
         <p>ติดตามสมาชิกครอบครัว พัฒนาการของลูก ประกัน และสวัสดิการทั้งหมดไว้ที่เดียว</p>
       </div>
 
