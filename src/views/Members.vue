@@ -1,10 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import PageHeader from '../components/PageHeader.vue'
 import AppIcon from '../components/AppIcon.vue'
 import StatProgressCard from '../components/StatProgressCard.vue'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { familyMembers as mockMembers, relationLabels } from '../data/sample'
+
+const router = useRouter()
 
 const members = ref([])
 const loading = ref(false)
@@ -174,10 +177,11 @@ onMounted(loadMembers)
             <th>เพศ</th>
             <th>วันเกิด</th>
             <th>อายุ</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="member in members" :key="member.id">
+          <tr v-for="member in members" :key="member.id" class="row-link" @click="router.push(`/members/${member.id}`)">
             <td>
               <div class="emp-cell">
                 <span class="avatar-chip" :style="{ background: 'var(--accent-blue)' }">{{ initials(member.full_name) }}</span>
@@ -188,6 +192,7 @@ onMounted(loadMembers)
             <td>{{ member.gender === 'male' ? 'ชาย' : member.gender === 'female' ? 'หญิง' : '-' }}</td>
             <td>{{ member.birth_date || '-' }}</td>
             <td>{{ ageLabel(member.birth_date) }}</td>
+            <td class="view-cell"><AppIcon name="chevronRight" :size="16" /></td>
           </tr>
         </tbody>
       </table>
@@ -201,6 +206,15 @@ onMounted(loadMembers)
   align-items: center;
   gap: 10px;
   font-weight: 600;
+}
+
+.row-link {
+  cursor: pointer;
+}
+
+.view-cell {
+  color: var(--text-muted);
+  text-align: right;
 }
 
 .notice {
