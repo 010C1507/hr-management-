@@ -14,6 +14,12 @@ const routes = [
     meta: { label: 'สมาชิกครอบครัว', icon: 'users' },
   },
   {
+    path: '/members/:id',
+    name: 'member-profile',
+    component: () => import('../views/MemberProfile.vue'),
+    meta: { label: 'ข้อมูลสมาชิก' },
+  },
+  {
     path: '/growth',
     name: 'growth',
     component: () => import('../views/Growth.vue'),
