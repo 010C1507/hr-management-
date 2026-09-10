@@ -20,6 +20,12 @@ const routes = [
     meta: { label: 'ข้อมูลสมาชิก' },
   },
   {
+    path: '/family-tree',
+    name: 'family-tree',
+    component: () => import('../views/FamilyTree.vue'),
+    meta: { label: 'ผังครอบครัว', icon: 'tree' },
+  },
+  {
     path: '/growth',
     name: 'growth',
     component: () => import('../views/Growth.vue'),

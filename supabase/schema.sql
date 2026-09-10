@@ -9,7 +9,7 @@ create table if not exists family_members (
   full_name text not null,
   relation text not null check (
     relation in (
-      'self', 'spouse', 'child',
+      'self', 'spouse', 'child', 'sibling',
       'father', 'mother',
       'grandfather_paternal', 'grandmother_paternal',
       'grandfather_maternal', 'grandmother_maternal',
@@ -187,6 +187,8 @@ begin
     insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, occupation) values
       ('ทองสุข ใจงาม', 'grandmother_maternal', 'female', '1943-05-27', '/avatars/elder-woman-3.svg', 'ยายสุข', 'AB', 'เกษียณ')
       returning id into id_gm_maternal;
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, occupation, hobbies) values
+      ('เอมิกา ชาวราช', 'sibling', 'female', '1993-07-19', '/avatars/woman-2.svg', 'เอม', 'O', '086-555-7788', 'เภสัชกร โรงพยาบาลหาดใหญ่', 'เดินป่า, เบเกอรี่');
 
     insert into education_history (member_id, level, institution, field, start_year, end_year, status) values
       (id_self, 'ปริญญาโท', 'จุฬาลงกรณ์มหาวิทยาลัย', 'วิศวกรรมคอมพิวเตอร์', 2013, 2015, 'completed'),

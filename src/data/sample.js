@@ -2,6 +2,7 @@ export const relationLabels = {
   self: 'ตัวเอง',
   spouse: 'คู่สมรส',
   child: 'ลูก',
+  sibling: 'พี่น้อง',
   father: 'พ่อ',
   mother: 'แม่',
   grandfather_paternal: 'ปู่',
@@ -25,6 +26,7 @@ export const familyMembers = [
   { id: 'm-8', photo_url: '/avatars/elder-woman-2.svg', full_name: 'บุญมี ชาวราช', relation: 'grandmother_paternal', gender: 'female', birth_date: '1941-09-18', avatarColor: '#f4977a', nickname: 'ย่ามี', blood_type: 'O', address: hatyaiAddress, occupation: 'เกษียณ', chronic_conditions: 'ความดันโลหิตสูง', hospital: 'โรงพยาบาลหาดใหญ่' },
   { id: 'm-9', photo_url: '/avatars/elder-man-3.svg', full_name: 'ประเสริฐ ใจงาม', relation: 'grandfather_maternal', gender: 'male', birth_date: '1940-11-02', avatarColor: '#8ec1f4', nickname: 'ตาเสริฐ', blood_type: 'A', occupation: 'เกษียณ' },
   { id: 'm-10', photo_url: '/avatars/elder-woman-3.svg', full_name: 'ทองสุข ใจงาม', relation: 'grandmother_maternal', gender: 'female', birth_date: '1943-05-27', avatarColor: '#b0a3ec', nickname: 'ยายสุข', blood_type: 'AB', occupation: 'เกษียณ' },
+  { id: 'm-11', photo_url: '/avatars/woman-2.svg', full_name: 'เอมิกา ชาวราช', relation: 'sibling', gender: 'female', birth_date: '1993-07-19', avatarColor: '#b0a3ec', nickname: 'เอม', blood_type: 'O', phone: '086-555-7788', address: hatyaiAddress, occupation: 'เภสัชกร โรงพยาบาลหาดใหญ่', hobbies: 'เดินป่า, เบเกอรี่' },
 ]
 
 export const educationHistory = [
