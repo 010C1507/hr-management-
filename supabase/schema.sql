@@ -157,32 +157,36 @@ declare
   id_gm_maternal uuid;
 begin
   if not exists (select 1 from family_members where full_name = 'เอกชัย ชาวราช') then
-    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('เอกชัย ชาวราช', 'self', 'male', '1990-04-12', 'เอก', 'O', '081-234-5678', 'eak@example.com', '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'Software Engineer บริษัท ABC จำกัด', '-', '-', 'โรงพยาบาลสินแพทย์', 'วิ่ง, ถ่ายภาพ, อ่านหนังสือ')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('เอกชัย ชาวราช', 'self', 'male', '1990-04-12', '/avatars/man-1.svg', 'เอก', 'O', '081-234-5678', 'eak@example.com', '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'Software Engineer บริษัท ABC จำกัด', '-', '-', 'โรงพยาบาลสินแพทย์', 'วิ่ง, ถ่ายภาพ, อ่านหนังสือ')
       returning id into id_self;
-    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('พิมพ์ชนก ชาวราช', 'spouse', 'female', '1991-08-03', 'พิม', 'A', '089-876-5432', 'pim@example.com', '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักบัญชี บริษัท XYZ จำกัด', 'แพ้อาหารทะเล', '-', 'โรงพยาบาลสินแพทย์', 'ทำอาหาร, โยคะ')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('พิมพ์ชนก ชาวราช', 'spouse', 'female', '1991-08-03', '/avatars/woman-1.svg', 'พิม', 'A', '089-876-5432', 'pim@example.com', '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักบัญชี บริษัท XYZ จำกัด', 'แพ้อาหารทะเล', '-', 'โรงพยาบาลสินแพทย์', 'ทำอาหาร, โยคะ')
       returning id into id_spouse;
-    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('น้องภูมิ ชาวราช', 'child', 'male', '2021-02-15', 'ภูมิ', 'O', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักเรียนอนุบาล 2 โรงเรียนอนุบาลรุ่งเรือง', 'แพ้นมวัว (เล็กน้อย)', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ต่อเลโก้, วาดรูป, ว่ายน้ำ')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('น้องภูมิ ชาวราช', 'child', 'male', '2021-02-15', '/avatars/boy-1.svg', 'ภูมิ', 'O', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักเรียนอนุบาล 2 โรงเรียนอนุบาลรุ่งเรือง', 'แพ้นมวัว (เล็กน้อย)', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ต่อเลโก้, วาดรูป, ว่ายน้ำ')
       returning id into id_child1;
-    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('น้องใบตอง ชาวราช', 'child', 'female', '2023-11-20', 'ใบตอง', 'A', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'เนอสเซอรี่บ้านอุ่นรัก', '-', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ฟังเพลง, เล่นตุ๊กตา')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('น้องใบตอง ชาวราช', 'child', 'female', '2023-11-20', '/avatars/baby-1.svg', 'ใบตอง', 'A', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'เนอสเซอรี่บ้านอุ่นรัก', '-', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ฟังเพลง, เล่นตุ๊กตา')
       returning id into id_child2;
-    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('สมชาย ชาวราช', 'father', 'male', '1962-01-05', 'ชาย', 'B', '081-111-2222', null, '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'ข้าราชการบำนาญ', 'แพ้ยาเพนิซิลลิน', 'ความดันโลหิตสูง, เบาหวานชนิดที่ 2', 'โรงพยาบาลหาดใหญ่', 'ปลูกต้นไม้, ตกปลา')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('สมชาย ชาวราช', 'father', 'male', '1962-01-05', '/avatars/elder-man-1.svg', 'ชาย', 'B', '081-111-2222', null, '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'ข้าราชการบำนาญ', 'แพ้ยาเพนิซิลลิน', 'ความดันโลหิตสูง, เบาหวานชนิดที่ 2', 'โรงพยาบาลหาดใหญ่', 'ปลูกต้นไม้, ตกปลา')
       returning id into id_father;
-    insert into family_members (full_name, relation, gender, birth_date, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('สมศรี ชาวราช', 'mother', 'female', '1964-06-22', 'ศรี', 'O', '081-333-4444', null, '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'แม่บ้าน', '-', 'ไขมันในเลือดสูง', 'โรงพยาบาลหาดใหญ่', 'ทำขนม, สวดมนต์')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
+      ('สมศรี ชาวราช', 'mother', 'female', '1964-06-22', '/avatars/elder-woman-1.svg', 'ศรี', 'O', '081-333-4444', null, '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'แม่บ้าน', '-', 'ไขมันในเลือดสูง', 'โรงพยาบาลหาดใหญ่', 'ทำขนม, สวดมนต์')
       returning id into id_mother;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('สมพงษ์ ชาวราช', 'grandfather_paternal', 'male', '1938-03-10') returning id into id_gf_paternal;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('บุญมี ชาวราช', 'grandmother_paternal', 'female', '1941-09-18') returning id into id_gm_paternal;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('ประเสริฐ ใจงาม', 'grandfather_maternal', 'male', '1940-11-02') returning id into id_gf_maternal;
-    insert into family_members (full_name, relation, gender, birth_date) values
-      ('ทองสุข ใจงาม', 'grandmother_maternal', 'female', '1943-05-27') returning id into id_gm_maternal;
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, address, occupation, chronic_conditions, hospital) values
+      ('สมพงษ์ ชาวราช', 'grandfather_paternal', 'male', '1938-03-10', '/avatars/elder-man-2.svg', 'ปู่พงษ์', 'B', '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'เกษียณ', 'ข้อเข่าเสื่อม', 'โรงพยาบาลหาดใหญ่')
+      returning id into id_gf_paternal;
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, address, occupation, chronic_conditions, hospital) values
+      ('บุญมี ชาวราช', 'grandmother_paternal', 'female', '1941-09-18', '/avatars/elder-woman-2.svg', 'ย่ามี', 'O', '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'เกษียณ', 'ความดันโลหิตสูง', 'โรงพยาบาลหาดใหญ่')
+      returning id into id_gm_paternal;
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, occupation) values
+      ('ประเสริฐ ใจงาม', 'grandfather_maternal', 'male', '1940-11-02', '/avatars/elder-man-3.svg', 'ตาเสริฐ', 'A', 'เกษียณ')
+      returning id into id_gf_maternal;
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, occupation) values
+      ('ทองสุข ใจงาม', 'grandmother_maternal', 'female', '1943-05-27', '/avatars/elder-woman-3.svg', 'ยายสุข', 'AB', 'เกษียณ')
+      returning id into id_gm_maternal;
 
     insert into education_history (member_id, level, institution, field, start_year, end_year, status) values
       (id_self, 'ปริญญาโท', 'จุฬาลงกรณ์มหาวิทยาลัย', 'วิศวกรรมคอมพิวเตอร์', 2013, 2015, 'completed'),
