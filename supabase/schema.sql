@@ -163,11 +163,11 @@ begin
     insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
       ('พิมพ์ชนก ชาวราช', 'spouse', 'female', '1991-08-03', '/avatars/woman-1.svg', 'พิม', 'A', '089-876-5432', 'pim@example.com', '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักบัญชี บริษัท XYZ จำกัด', 'แพ้อาหารทะเล', '-', 'โรงพยาบาลสินแพทย์', 'ทำอาหาร, โยคะ')
       returning id into id_spouse;
-    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('น้องภูมิ ชาวราช', 'child', 'male', '2021-02-15', '/avatars/boy-1.svg', 'ภูมิ', 'O', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'นักเรียนอนุบาล 2 โรงเรียนอนุบาลรุ่งเรือง', 'แพ้นมวัว (เล็กน้อย)', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ต่อเลโก้, วาดรูป, ว่ายน้ำ')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname) values
+      ('กวินท์ณภัทร ริยาพันธ์', 'child', 'male', '2021-05-20', '/avatars/boy-1.svg', 'วินเนอร์')
       returning id into id_child1;
-    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
-      ('น้องใบตอง ชาวราช', 'child', 'female', '2023-11-20', '/avatars/baby-1.svg', 'ใบตอง', 'A', null, null, '99/12 หมู่บ้านสุขสันต์ ถ.รามอินทรา แขวงท่าแร้ง เขตบางเขน กรุงเทพฯ 10230', 'เนอสเซอรี่บ้านอุ่นรัก', '-', '-', 'โรงพยาบาลเด็กสมิติเวช', 'ฟังเพลง, เล่นตุ๊กตา')
+    insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname) values
+      ('ชินท์ณภัทร์ ริยาพันธ์', 'child', 'male', '2023-07-07', '/avatars/boy-1.svg', 'โอชิน')
       returning id into id_child2;
     insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, email, address, occupation, allergies, chronic_conditions, hospital, hobbies) values
       ('สมชาย ชาวราช', 'father', 'male', '1962-01-05', '/avatars/elder-man-1.svg', 'ชาย', 'B', '081-111-2222', null, '45 ถ.เพชรเกษม ต.หาดใหญ่ อ.หาดใหญ่ จ.สงขลา 90110', 'ข้าราชการบำนาญ', 'แพ้ยาเพนิซิลลิน', 'ความดันโลหิตสูง, เบาหวานชนิดที่ 2', 'โรงพยาบาลหาดใหญ่', 'ปลูกต้นไม้, ตกปลา')
@@ -194,35 +194,19 @@ begin
       (id_self, 'ปริญญาโท', 'จุฬาลงกรณ์มหาวิทยาลัย', 'วิศวกรรมคอมพิวเตอร์', 2013, 2015, 'completed'),
       (id_self, 'ปริญญาตรี', 'มหาวิทยาลัยเกษตรศาสตร์', 'วิศวกรรมคอมพิวเตอร์', 2008, 2012, 'completed'),
       (id_self, 'มัธยมศึกษา', 'โรงเรียนหาดใหญ่วิทยาลัย', 'วิทย์-คณิต', 2002, 2008, 'completed'),
-      (id_spouse, 'ปริญญาตรี', 'มหาวิทยาลัยธรรมศาสตร์', 'บัญชี', 2009, 2013, 'completed'),
-      (id_child1, 'อนุบาล', 'โรงเรียนอนุบาลรุ่งเรือง', 'อนุบาล 2', 2025, null, 'studying'),
-      (id_child2, 'เตรียมอนุบาล', 'เนอสเซอรี่บ้านอุ่นรัก', null, 2025, null, 'studying');
+      (id_spouse, 'ปริญญาตรี', 'มหาวิทยาลัยธรรมศาสตร์', 'บัญชี', 2009, 2013, 'completed');
 
     insert into medical_records (member_id, record_date, hospital, doctor, diagnosis, treatment, cost) values
-      (id_child1, current_date - 20, 'โรงพยาบาลเด็กสมิติเวช', 'พญ.กมลรัตน์', 'ไข้หวัดใหญ่สายพันธุ์ A', 'ยาต้านไวรัส Oseltamivir 5 วัน + ยาลดไข้', 3200),
-      (id_child1, current_date - 120, 'โรงพยาบาลเด็กสมิติเวช', 'พญ.กมลรัตน์', 'ตรวจสุขภาพ + วัคซีน MMR เข็ม 2', 'ฉีดวัคซีนตามนัด', 1800),
-      (id_child2, current_date - 10, 'โรงพยาบาลเด็กสมิติเวช', 'นพ.ธีรพงษ์', 'วัคซีน DTP-HB-Hib เข็มกระตุ้น', 'ฉีดวัคซีนตามนัด', 2400),
       (id_father, current_date - 35, 'โรงพยาบาลหาดใหญ่', 'นพ.วิชัย', 'ติดตามเบาหวาน + ความดัน', 'ปรับยา Metformin, ตรวจ HbA1c', 1500),
       (id_self, current_date - 200, 'โรงพยาบาลสินแพทย์', 'นพ.ประวิทย์', 'ตรวจสุขภาพประจำปี', 'ผลปกติ แนะนำออกกำลังกายสม่ำเสมอ', 4500);
 
-    insert into growth_records (member_id, record_date, weight_kg, height_cm, note) values
-      (id_child1, current_date - 540, 9.8, 74.0, null),
-      (id_child1, current_date - 450, 10.4, 77.5, null),
-      (id_child1, current_date - 360, 10.9, 79.8, null),
-      (id_child1, current_date - 270, 11.2, 81.0, null),
-      (id_child1, current_date - 180, 11.5, 82.0, null),
-      (id_child1, current_date - 90, 12.3, 85.5, null),
-      (id_child1, current_date, 13.0, 88.0, 'ตรวจสุขภาพประจำปีที่คลินิกเด็ก'),
-      (id_child2, current_date - 275, 3.4, 50.5, 'แรกเกิด'),
-      (id_child2, current_date - 184, 5.0, 55.0, null),
-      (id_child2, current_date - 90, 5.8, 58.0, null),
-      (id_child2, current_date, 6.9, 63.5, 'ฉีดวัคซีนตามนัด');
+    insert into growth_records (member_id, record_date, weight_kg, note) values
+      (id_child1, '2021-05-20', 2.9, 'น้ำหนักแรกเกิด'),
+      (id_child2, '2023-07-07', 3.4, 'น้ำหนักแรกเกิด');
 
     insert into insurance_policies (member_id, provider, policy_type, policy_number, coverage_amount, premium, start_date, end_date, status) values
       (id_self, 'เมืองไทยประกันชีวิต', 'life', 'LF-100234', 1000000, 18000, current_date - 200, current_date + 165, 'active'),
       (id_spouse, 'ไทยประกันชีวิต', 'health', 'HL-330012', 500000, 15000, current_date - 220, current_date + 75, 'active'),
-      (id_child1, 'AIA', 'health', 'HL-556677', 300000, 9500, current_date - 100, current_date + 265, 'active'),
-      (id_child2, 'AIA', 'health', 'HL-556699', 300000, 9500, current_date - 30, current_date + 335, 'active'),
       (id_father, 'กรุงไทย-แอกซ่า', 'health', 'HL-778821', 200000, 22000, current_date - 150, current_date + 400, 'active'),
       (id_mother, 'กรุงไทย-แอกซ่า', 'health', 'HL-778822', 200000, 22000, current_date - 150, current_date + 400, 'active'),
       (id_self, 'วิริยะประกันภัย', 'car', 'CR-991045', 800000, 12500, current_date - 550, current_date - 100, 'expired');
@@ -230,9 +214,6 @@ begin
     insert into welfare_benefits (member_id, benefit_name, provider, benefit_type, amount, valid_until, status) values
       (id_self, 'สวัสดิการค่ารักษาพยาบาลพนักงาน', 'บริษัท ABC จำกัด', 'medical', 20000, current_date + 200, 'active'),
       (id_spouse, 'สวัสดิการค่ารักษาพยาบาลพนักงาน', 'บริษัท XYZ จำกัด', 'medical', 15000, current_date + 200, 'active'),
-      (id_child1, 'เงินสงเคราะห์บุตร ประกันสังคม', 'สำนักงานประกันสังคม', 'allowance', 800, current_date + 365, 'active'),
-      (id_child2, 'เงินสงเคราะห์บุตร ประกันสังคม', 'สำนักงานประกันสังคม', 'allowance', 800, current_date + 365, 'active'),
-      (id_child1, 'ทุนการศึกษาอนุบาล', 'โรงเรียนอนุบาลรุ่งเรือง', 'education', 5000, current_date + 600, 'active'),
       (id_father, 'บัตรสวัสดิการแห่งรัฐ', 'กระทรวงการคลัง', 'allowance', 300, current_date + 20, 'active'),
       (id_mother, 'เบี้ยยังชีพผู้สูงอายุ', 'เทศบาลเมือง', 'allowance', 700, current_date + 115, 'active'),
       (id_gf_paternal, 'เบี้ยยังชีพผู้สูงอายุ', 'เทศบาลเมือง', 'allowance', 1000, current_date + 115, 'active'),
