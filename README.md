@@ -1,4 +1,4 @@
-# Family Tracker
+# Household Registry
 
 Web UI สำหรับติดตามข้อมูลครอบครัว พัฒนาด้วย Vue 3 + Vite
 

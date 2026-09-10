@@ -21,14 +21,14 @@ const isActive = (to) => (to === '/' ? route.path === '/' : route.path.startsWit
 <template>
   <aside class="sidebar">
     <!-- Brand card -->
-    <router-link to="/" class="brand" aria-label="Family Tracker">
+    <router-link to="/" class="brand" aria-label="Household Registry">
       <span class="brand-mark">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 20V11M10 20V5M16 20v-8M22 20H2" />
         </svg>
       </span>
       <span class="brand-text">
-        <span class="brand-name">Family Tracker</span>
+        <span class="brand-name">Household Registry</span>
         <span class="brand-sub">by BUGpairoj</span>
       </span>
     </router-link>
@@ -62,7 +62,7 @@ const isActive = (to) => (to === '/' ? route.path === '/' : route.path.startsWit
 
     <!-- Footer tagline -->
     <div class="sidebar-footer">
-      <span class="footer-brand">Family Tracker</span>
+      <span class="footer-brand">Household Registry</span>
       <span class="footer-tagline">Better Family<br />Better Future</span>
     </div>
   </aside>
