@@ -7,6 +7,7 @@ const route = useRoute()
 const menu = [
   { to: '/', label: 'แดชบอร์ด', icon: 'home' },
   { to: '/members', label: 'สมาชิกครอบครัว', icon: 'users' },
+  { to: '/family-tree', label: 'ผังครอบครัว', icon: 'tree' },
   { to: '/growth', label: 'พัฒนาการลูก', icon: 'heart' },
   { to: '/insurance', label: 'ประกัน', icon: 'shield' },
   { to: '/welfare', label: 'สวัสดิการ', icon: 'gift' },
