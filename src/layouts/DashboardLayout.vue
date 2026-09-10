@@ -21,12 +21,14 @@ import AppHeader from '../components/AppHeader.vue'
   width: 100%;
   min-height: 100vh;
   display: flex;
+  align-items: flex-start;
   background: var(--card-gradient);
 }
 
 .content-col {
   flex: 1;
   min-width: 0;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: #ffffff;

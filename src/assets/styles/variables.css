@@ -1,6 +1,6 @@
 :root {
   /* Sidebar — stays dark navy */
-  --sidebar-gradient: linear-gradient(180deg, #162d50 0%, #1a4882 55%, #1e6ec8 100%);
+  --sidebar-gradient: linear-gradient(180deg, #0b2a5c 0%, #0f3a73 42%, #1653a8 78%, #1c62c9 100%);
 
   /* Page shell backgrounds */
   --card-gradient: #f0f5ff;
