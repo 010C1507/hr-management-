@@ -32,8 +32,9 @@ npm run build    # build สำหรับ production
 1. สมัคร/ล็อกอินที่ https://supabase.com แล้วกด **New project**
 2. ตั้งชื่อโปรเจกต์ (เช่น `family-tracker`) เลือก region ที่ใกล้ที่สุด และตั้งรหัสผ่านฐานข้อมูล แล้วกด **Create new project** (รอสักครู่ให้ provision เสร็จ)
 3. เมื่อโปรเจกต์พร้อมแล้ว ไปที่เมนู **SQL Editor** (แถบซ้าย) → **New query**
-4. คัดลอกเนื้อหาทั้งหมดจากไฟล์ [`supabase/schema.sql`](./supabase/schema.sql) ในโปรเจกต์นี้ วางแล้วกด **Run** — จะได้ตาราง `family_members`, `growth_records`, `insurance_policies`, `welfare_benefits` พร้อมข้อมูลตัวอย่าง
+4. คัดลอกเนื้อหาทั้งหมดจากไฟล์ [`supabase/schema.sql`](./supabase/schema.sql) ในโปรเจกต์นี้ วางแล้วกด **Run** — จะได้ตาราง `family_members`, `growth_records`, `insurance_policies`, `welfare_benefits`, `education_history`, `medical_records` พร้อมข้อมูลตัวอย่าง
    - หากเคยรัน schema เวอร์ชัน HR เดิมมาก่อน ให้รัน [`supabase/migrations/001_family_schema.sql`](./supabase/migrations/001_family_schema.sql) ก่อน เพื่อลบตารางเดิมทิ้ง แล้วค่อยรัน `schema.sql`
+   - หากเคยรัน `schema.sql` เวอร์ชัน Family Tracker รุ่นแรกแล้ว (ยังไม่มีคอลัมน์ข้อมูลส่วนตัวละเอียด/ตารางการศึกษา-การรักษา) ให้รัน [`supabase/migrations/002_personal_details.sql`](./supabase/migrations/002_personal_details.sql) เพิ่มเติม
 5. ไปที่ **Project Settings → API** คัดลอกค่า:
    - **Project URL** → ใช้เป็น `VITE_SUPABASE_URL`
    - **anon public key** → ใช้เป็น `VITE_SUPABASE_ANON_KEY`
