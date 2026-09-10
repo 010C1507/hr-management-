@@ -18,8 +18,8 @@ const hatyaiAddress = '45 ถ.เพชรเกษม ต.หาดใหญ่
 export const familyMembers = [
   { id: 'm-1', photo_url: '/avatars/man-1.svg', full_name: 'เอกชัย ชาวราช', relation: 'self', gender: 'male', birth_date: '1990-04-12', avatarColor: '#8ec1f4', nickname: 'เอก', blood_type: 'O', phone: '081-234-5678', email: 'eak@example.com', address: homeAddress, occupation: 'Software Engineer บริษัท ABC จำกัด', allergies: '-', chronic_conditions: '-', hospital: 'โรงพยาบาลสินแพทย์', hobbies: 'วิ่ง, ถ่ายภาพ, อ่านหนังสือ' },
   { id: 'm-2', photo_url: '/avatars/woman-1.svg', full_name: 'พิมพ์ชนก ชาวราช', relation: 'spouse', gender: 'female', birth_date: '1991-08-03', avatarColor: '#f4977a', nickname: 'พิม', blood_type: 'A', phone: '089-876-5432', email: 'pim@example.com', address: homeAddress, occupation: 'นักบัญชี บริษัท XYZ จำกัด', allergies: 'แพ้อาหารทะเล', chronic_conditions: '-', hospital: 'โรงพยาบาลสินแพทย์', hobbies: 'ทำอาหาร, โยคะ' },
-  { id: 'm-3', photo_url: '/avatars/boy-1.svg', full_name: 'น้องภูมิ ชาวราช', relation: 'child', gender: 'male', birth_date: '2021-02-15', avatarColor: '#3ecf8e', nickname: 'ภูมิ', blood_type: 'O', address: homeAddress, occupation: 'นักเรียนอนุบาล 2 โรงเรียนอนุบาลรุ่งเรือง', allergies: 'แพ้นมวัว (เล็กน้อย)', chronic_conditions: '-', hospital: 'โรงพยาบาลเด็กสมิติเวช', hobbies: 'ต่อเลโก้, วาดรูป, ว่ายน้ำ' },
-  { id: 'm-4', photo_url: '/avatars/baby-1.svg', full_name: 'น้องใบตอง ชาวราช', relation: 'child', gender: 'female', birth_date: '2023-11-20', avatarColor: '#b0a3ec', nickname: 'ใบตอง', blood_type: 'A', address: homeAddress, occupation: 'เนอสเซอรี่บ้านอุ่นรัก', allergies: '-', chronic_conditions: '-', hospital: 'โรงพยาบาลเด็กสมิติเวช', hobbies: 'ฟังเพลง, เล่นตุ๊กตา' },
+  { id: 'm-3', photo_url: '/avatars/boy-1.svg', full_name: 'กวินท์ณภัทร ริยาพันธ์', relation: 'child', gender: 'male', birth_date: '2021-05-20', avatarColor: '#3ecf8e', nickname: 'วินเนอร์' },
+  { id: 'm-4', photo_url: '/avatars/boy-1.svg', full_name: 'ชินท์ณภัทร์ ริยาพันธ์', relation: 'child', gender: 'male', birth_date: '2023-07-07', avatarColor: '#b0a3ec', nickname: 'โอชิน' },
   { id: 'm-5', photo_url: '/avatars/elder-man-1.svg', full_name: 'สมชาย ชาวราช', relation: 'father', gender: 'male', birth_date: '1962-01-05', avatarColor: '#e3ef6c', nickname: 'ชาย', blood_type: 'B', phone: '081-111-2222', address: hatyaiAddress, occupation: 'ข้าราชการบำนาญ', allergies: 'แพ้ยาเพนิซิลลิน', chronic_conditions: 'ความดันโลหิตสูง, เบาหวานชนิดที่ 2', hospital: 'โรงพยาบาลหาดใหญ่', hobbies: 'ปลูกต้นไม้, ตกปลา' },
   { id: 'm-6', photo_url: '/avatars/elder-woman-1.svg', full_name: 'สมศรี ชาวราช', relation: 'mother', gender: 'female', birth_date: '1964-06-22', avatarColor: '#8ec1f4', nickname: 'ศรี', blood_type: 'O', phone: '081-333-4444', address: hatyaiAddress, occupation: 'แม่บ้าน', allergies: '-', chronic_conditions: 'ไขมันในเลือดสูง', hospital: 'โรงพยาบาลหาดใหญ่', hobbies: 'ทำขนม, สวดมนต์' },
   { id: 'm-7', photo_url: '/avatars/elder-man-2.svg', full_name: 'สมพงษ์ ชาวราช', relation: 'grandfather_paternal', gender: 'male', birth_date: '1938-03-10', avatarColor: '#e3ef6c', nickname: 'ปู่พงษ์', blood_type: 'B', address: hatyaiAddress, occupation: 'เกษียณ', chronic_conditions: 'ข้อเข่าเสื่อม', hospital: 'โรงพยาบาลหาดใหญ่' },
@@ -34,37 +34,21 @@ export const educationHistory = [
   { id: 'e-2', member_id: 'm-1', level: 'ปริญญาตรี', institution: 'มหาวิทยาลัยเกษตรศาสตร์', field: 'วิศวกรรมคอมพิวเตอร์', start_year: 2008, end_year: 2012, status: 'completed' },
   { id: 'e-3', member_id: 'm-1', level: 'มัธยมศึกษา', institution: 'โรงเรียนหาดใหญ่วิทยาลัย', field: 'วิทย์-คณิต', start_year: 2002, end_year: 2008, status: 'completed' },
   { id: 'e-4', member_id: 'm-2', level: 'ปริญญาตรี', institution: 'มหาวิทยาลัยธรรมศาสตร์', field: 'บัญชี', start_year: 2009, end_year: 2013, status: 'completed' },
-  { id: 'e-5', member_id: 'm-3', level: 'อนุบาล', institution: 'โรงเรียนอนุบาลรุ่งเรือง', field: 'อนุบาล 2', start_year: 2025, end_year: null, status: 'studying' },
-  { id: 'e-6', member_id: 'm-4', level: 'เตรียมอนุบาล', institution: 'เนอสเซอรี่บ้านอุ่นรัก', field: null, start_year: 2025, end_year: null, status: 'studying' },
 ]
 
 export const medicalRecords = [
-  { id: 'md-1', member_id: 'm-3', record_date: '2026-08-21', hospital: 'โรงพยาบาลเด็กสมิติเวช', doctor: 'พญ.กมลรัตน์', diagnosis: 'ไข้หวัดใหญ่สายพันธุ์ A', treatment: 'ยาต้านไวรัส Oseltamivir 5 วัน + ยาลดไข้', cost: 3200 },
-  { id: 'md-2', member_id: 'm-3', record_date: '2026-05-13', hospital: 'โรงพยาบาลเด็กสมิติเวช', doctor: 'พญ.กมลรัตน์', diagnosis: 'ตรวจสุขภาพ + วัคซีน MMR เข็ม 2', treatment: 'ฉีดวัคซีนตามนัด', cost: 1800 },
-  { id: 'md-3', member_id: 'm-4', record_date: '2026-08-31', hospital: 'โรงพยาบาลเด็กสมิติเวช', doctor: 'นพ.ธีรพงษ์', diagnosis: 'วัคซีน DTP-HB-Hib เข็มกระตุ้น', treatment: 'ฉีดวัคซีนตามนัด', cost: 2400 },
   { id: 'md-4', member_id: 'm-5', record_date: '2026-08-06', hospital: 'โรงพยาบาลหาดใหญ่', doctor: 'นพ.วิชัย', diagnosis: 'ติดตามเบาหวาน + ความดัน', treatment: 'ปรับยา Metformin, ตรวจ HbA1c', cost: 1500 },
   { id: 'md-5', member_id: 'm-1', record_date: '2026-02-22', hospital: 'โรงพยาบาลสินแพทย์', doctor: 'นพ.ประวิทย์', diagnosis: 'ตรวจสุขภาพประจำปี', treatment: 'ผลปกติ แนะนำออกกำลังกายสม่ำเสมอ', cost: 4500 },
 ]
 
 export const growthRecords = [
-  { id: 'g-1', member_id: 'm-3', record_date: '2024-03-15', weight_kg: 9.8, height_cm: 74.0 },
-  { id: 'g-2', member_id: 'm-3', record_date: '2024-06-15', weight_kg: 10.4, height_cm: 77.5 },
-  { id: 'g-3', member_id: 'm-3', record_date: '2024-09-15', weight_kg: 10.9, height_cm: 79.8 },
-  { id: 'g-4', member_id: 'm-3', record_date: '2024-12-15', weight_kg: 11.2, height_cm: 81.0 },
-  { id: 'g-5', member_id: 'm-3', record_date: '2025-03-15', weight_kg: 11.5, height_cm: 82.0 },
-  { id: 'g-6', member_id: 'm-3', record_date: '2025-06-15', weight_kg: 12.3, height_cm: 85.5 },
-  { id: 'g-7', member_id: 'm-3', record_date: '2025-09-09', weight_kg: 13.0, height_cm: 88.0, note: 'ตรวจสุขภาพประจำปีที่คลินิกเด็ก' },
-  { id: 'g-8', member_id: 'm-4', record_date: '2024-12-09', weight_kg: 3.4, height_cm: 50.5, note: 'แรกเกิด' },
-  { id: 'g-9', member_id: 'm-4', record_date: '2025-03-09', weight_kg: 5.0, height_cm: 55.0 },
-  { id: 'g-10', member_id: 'm-4', record_date: '2025-06-09', weight_kg: 5.8, height_cm: 58.0 },
-  { id: 'g-11', member_id: 'm-4', record_date: '2025-09-09', weight_kg: 6.9, height_cm: 63.5, note: 'ฉีดวัคซีนตามนัด' },
+  { id: 'g-1', member_id: 'm-3', record_date: '2021-05-20', weight_kg: 2.9, note: 'น้ำหนักแรกเกิด' },
+  { id: 'g-2', member_id: 'm-4', record_date: '2023-07-07', weight_kg: 3.4, note: 'น้ำหนักแรกเกิด' },
 ]
 
 export const insurancePolicies = [
   { id: 'i-1', member_id: 'm-1', provider: 'เมืองไทยประกันชีวิต', policy_type: 'life', policy_number: 'LF-100234', coverage_amount: 1000000, premium: 18000, end_date: '2027-02-01', status: 'active' },
   { id: 'i-2', member_id: 'm-2', provider: 'ไทยประกันชีวิต', policy_type: 'health', policy_number: 'HL-330012', coverage_amount: 500000, premium: 15000, end_date: '2026-11-20', status: 'active' },
-  { id: 'i-3', member_id: 'm-3', provider: 'AIA', policy_type: 'health', policy_number: 'HL-556677', coverage_amount: 300000, premium: 9500, end_date: '2026-05-30', status: 'active' },
-  { id: 'i-4', member_id: 'm-4', provider: 'AIA', policy_type: 'health', policy_number: 'HL-556699', coverage_amount: 300000, premium: 9500, end_date: '2026-08-09', status: 'active' },
   { id: 'i-5', member_id: 'm-5', provider: 'กรุงไทย-แอกซ่า', policy_type: 'health', policy_number: 'HL-778821', coverage_amount: 200000, premium: 22000, end_date: '2026-10-15', status: 'active' },
   { id: 'i-6', member_id: 'm-6', provider: 'กรุงไทย-แอกซ่า', policy_type: 'health', policy_number: 'HL-778822', coverage_amount: 200000, premium: 22000, end_date: '2026-10-15', status: 'active' },
   { id: 'i-7', member_id: 'm-1', provider: 'วิริยะประกันภัย', policy_type: 'car', policy_number: 'CR-991045', coverage_amount: 800000, premium: 12500, end_date: '2025-12-01', status: 'expired' },
@@ -73,9 +57,6 @@ export const insurancePolicies = [
 export const welfareBenefits = [
   { id: 'w-1', member_id: 'm-1', benefit_name: 'สวัสดิการค่ารักษาพยาบาลพนักงาน', provider: 'บริษัท ABC จำกัด', benefit_type: 'medical', amount: 20000, valid_until: '2026-12-31', status: 'active' },
   { id: 'w-2', member_id: 'm-2', benefit_name: 'สวัสดิการค่ารักษาพยาบาลพนักงาน', provider: 'บริษัท XYZ จำกัด', benefit_type: 'medical', amount: 15000, valid_until: '2026-12-31', status: 'active' },
-  { id: 'w-3', member_id: 'm-3', benefit_name: 'เงินสงเคราะห์บุตร ประกันสังคม', provider: 'สำนักงานประกันสังคม', benefit_type: 'allowance', amount: 800, valid_until: '2026-09-09', status: 'active' },
-  { id: 'w-4', member_id: 'm-4', benefit_name: 'เงินสงเคราะห์บุตร ประกันสังคม', provider: 'สำนักงานประกันสังคม', benefit_type: 'allowance', amount: 800, valid_until: '2026-09-09', status: 'active' },
-  { id: 'w-5', member_id: 'm-3', benefit_name: 'ทุนการศึกษาอนุบาล', provider: 'โรงเรียนอนุบาลรุ่งเรือง', benefit_type: 'education', amount: 5000, valid_until: '2027-04-30', status: 'active' },
   { id: 'w-6', member_id: 'm-5', benefit_name: 'บัตรสวัสดิการแห่งรัฐ', provider: 'กระทรวงการคลัง', benefit_type: 'allowance', amount: 300, valid_until: '2026-09-30', status: 'active' },
   { id: 'w-7', member_id: 'm-6', benefit_name: 'เบี้ยยังชีพผู้สูงอายุ', provider: 'เทศบาลเมือง', benefit_type: 'allowance', amount: 700, valid_until: '2026-12-31', status: 'active' },
   { id: 'w-8', member_id: 'm-7', benefit_name: 'เบี้ยยังชีพผู้สูงอายุ', provider: 'เทศบาลเมือง', benefit_type: 'allowance', amount: 1000, valid_until: '2026-12-31', status: 'active' },
