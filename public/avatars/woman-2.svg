@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs><clipPath id="c-woman-2"><circle cx="100" cy="100" r="100"/></clipPath></defs>
+  <g clip-path="url(#c-woman-2)">
+    <rect width="200" height="200" fill="#eee8fc"/>
+    <rect x="87" y="116" width="26" height="26" rx="12" fill="#cea685"/>
+    <path d="M30 200c0-38 31-68 70-68s70 30 70 68z" fill="#8a72d6"/>
+    <path d="M30 200c0-38 31-68 70-68s70 30 70 68z" fill="#7460b4" opacity=".25" transform="translate(0 34)"/>
+    <ellipse cx="100" cy="102" rx="50" ry="60" fill="#4a2f28"/>
+    <circle cx="100" cy="82" r="42" fill="#4a2f28"/>
+    <circle cx="100" cy="90" r="36" fill="#f0c19b"/>
+    <circle cx="88" cy="88" r="3.6" fill="#3a3a44"/>
+    <circle cx="112" cy="88" r="3.6" fill="#3a3a44"/>
+    <path d="M89 103 q 11 9 22 0" fill="none" stroke="#3a3a44" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -6,6 +6,7 @@ import AppIcon from '../components/AppIcon.vue'
 import StatProgressCard from '../components/StatProgressCard.vue'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { familyMembers as mockMembers, relationLabels } from '../data/sample'
+import { builtInAvatars } from '../data/avatars'
 
 const router = useRouter()
 
@@ -20,6 +21,7 @@ const form = ref({
   relation: 'child',
   gender: 'male',
   birth_date: '',
+  photo_url: '',
 })
 
 const usingMockData = computed(() => !isSupabaseConfigured)
@@ -86,6 +88,7 @@ async function addMember() {
   const { error } = await supabase.from('family_members').insert({
     ...form.value,
     birth_date: form.value.birth_date || null,
+    photo_url: form.value.photo_url || null,
   })
   saving.value = false
 
@@ -94,7 +97,7 @@ async function addMember() {
     return
   }
 
-  form.value = { full_name: '', relation: 'child', gender: 'male', birth_date: '' }
+  form.value = { full_name: '', relation: 'child', gender: 'male', birth_date: '', photo_url: '' }
   showForm.value = false
   await loadMembers()
 }
@@ -155,6 +158,22 @@ onMounted(loadMembers)
         <label>วันเกิด</label>
         <input v-model="form.birth_date" type="date" />
       </div>
+      <div class="field avatar-field">
+        <label>รูปโปรไฟล์ (เลือกได้ หรือเปลี่ยน/อัปโหลดภายหลังในหน้าโปรไฟล์)</label>
+        <div class="avatar-picker">
+          <button
+            v-for="a in builtInAvatars"
+            :key="a.id"
+            type="button"
+            class="avatar-option"
+            :class="{ selected: form.photo_url === a.url }"
+            :title="a.label"
+            @click="form.photo_url = form.photo_url === a.url ? '' : a.url"
+          >
+            <img :src="a.url" :alt="a.label" />
+          </button>
+        </div>
+      </div>
       <button class="btn-primary" type="submit" :disabled="saving">
         {{ saving ? 'กำลังบันทึก...' : 'บันทึก' }}
       </button>
@@ -184,7 +203,8 @@ onMounted(loadMembers)
           <tr v-for="member in members" :key="member.id" class="row-link" @click="router.push(`/members/${member.id}`)">
             <td>
               <div class="emp-cell">
-                <span class="avatar-chip" :style="{ background: 'var(--accent-blue)' }">{{ initials(member.full_name) }}</span>
+                <img v-if="member.photo_url" class="avatar-chip" :src="member.photo_url" :alt="member.full_name" />
+                <span v-else class="avatar-chip" :style="{ background: 'var(--accent-blue)' }">{{ initials(member.full_name) }}</span>
                 {{ member.full_name }}
               </div>
             </td>
@@ -210,6 +230,47 @@ onMounted(loadMembers)
 
 .row-link {
   cursor: pointer;
+}
+
+img.avatar-chip {
+  object-fit: cover;
+  background: var(--surface-bg);
+}
+
+.avatar-field {
+  grid-column: 1 / -1;
+}
+
+.avatar-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.avatar-option {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: var(--surface-bg);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.avatar-option:hover {
+  transform: translateY(-2px);
+}
+
+.avatar-option.selected {
+  border-color: #1a3f7a;
 }
 
 .view-cell {

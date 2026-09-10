@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppIcon from '../components/AppIcon.vue'
 import GrowthTrendChart from '../components/GrowthTrendChart.vue'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { builtInAvatars, fileToSquareDataUrl } from '../data/avatars'
 import {
   familyMembers as mockMembers,
   growthRecords as mockRecords,
@@ -51,6 +52,20 @@ const policyTypeLabels = { life: 'ประกันชีวิต', health: '�
 const benefitTypeLabels = { medical: 'ค่ารักษาพยาบาล', education: 'การศึกษา', allowance: 'เงินช่วยเหลือ', other: 'อื่น ๆ' }
 const educationStatusLabels = { studying: 'กำลังศึกษา', completed: 'สำเร็จการศึกษา' }
 const bloodTypes = ['A', 'B', 'AB', 'O']
+
+const photoInput = ref(null)
+
+async function onPhotoFile(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  try {
+    editForm.value.photo_url = await fileToSquareDataUrl(file)
+    errorMessage.value = ''
+  } catch (err) {
+    errorMessage.value = err.message
+  }
+  event.target.value = ''
+}
 
 function blankEducation() {
   return { level: '', institution: '', field: '', start_year: '', end_year: '', status: 'completed', note: '' }
@@ -160,6 +175,7 @@ async function loadProfile() {
 function openEditForm() {
   const m = member.value
   editForm.value = {
+    photo_url: m.photo_url || '',
     full_name: m.full_name || '',
     nickname: m.nickname || '',
     relation: m.relation || 'other',
@@ -284,7 +300,8 @@ onMounted(loadProfile)
 
     <template v-if="member">
       <div class="data-card profile-header">
-        <div class="avatar-xl" :style="{ background: member.avatarColor || 'var(--accent-blue)' }">
+        <img v-if="member.photo_url" class="avatar-xl" :src="member.photo_url" :alt="member.full_name" />
+        <div v-else class="avatar-xl" :style="{ background: member.avatarColor || 'var(--accent-blue)' }">
           {{ initials(member.full_name) }}
         </div>
         <div class="profile-main">
@@ -404,6 +421,38 @@ onMounted(loadProfile)
       <!-- ข้อมูลส่วนตัว -->
       <div v-else-if="activeTab === 'personal'" class="tab-panel">
         <form v-if="showEditForm" class="data-card add-form" @submit.prevent="saveMember">
+          <div class="photo-editor span-2">
+            <div class="photo-preview">
+              <img v-if="editForm.photo_url" :src="editForm.photo_url" alt="ตัวอย่างรูปโปรไฟล์" />
+              <span v-else>{{ initials(editForm.full_name) }}</span>
+            </div>
+            <div class="photo-controls">
+              <label class="photo-label">รูปโปรไฟล์</label>
+              <div class="avatar-picker">
+                <button
+                  v-for="a in builtInAvatars"
+                  :key="a.id"
+                  type="button"
+                  class="avatar-option"
+                  :class="{ selected: editForm.photo_url === a.url }"
+                  :title="a.label"
+                  @click="editForm.photo_url = a.url"
+                >
+                  <img :src="a.url" :alt="a.label" />
+                </button>
+              </div>
+              <div class="photo-actions">
+                <button class="btn-ghost" type="button" @click="photoInput.click()">
+                  <AppIcon name="download" :size="15" /> อัปโหลดรูปจากเครื่อง
+                </button>
+                <button v-if="editForm.photo_url" class="btn-ghost" type="button" @click="editForm.photo_url = ''">
+                  <AppIcon name="close" :size="15" /> ลบรูป
+                </button>
+                <input ref="photoInput" type="file" accept="image/*" hidden @change="onPhotoFile" />
+              </div>
+              <input v-model="editForm.photo_url" type="text" class="photo-url" placeholder="หรือวางลิงก์รูปภาพ (https://...)" />
+            </div>
+          </div>
           <div class="field"><label>ชื่อ-นามสกุล *</label><input v-model="editForm.full_name" type="text" /></div>
           <div class="field"><label>ชื่อเล่น</label><input v-model="editForm.nickname" type="text" /></div>
           <div class="field"><label>ความสัมพันธ์</label>
@@ -691,6 +740,102 @@ onMounted(loadProfile)
   font-weight: 700;
   color: #1e3a5f;
   flex-shrink: 0;
+  object-fit: cover;
+  background: var(--surface-bg);
+}
+
+.photo-editor {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.photo-preview {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e3a5f;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-controls {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.photo-label {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.avatar-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.avatar-option {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: var(--surface-bg);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.avatar-option:hover {
+  transform: translateY(-2px);
+}
+
+.avatar-option.selected {
+  border-color: #1a3f7a;
+}
+
+.photo-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.photo-url {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  font-size: 13px;
+  max-width: 420px;
 }
 
 .profile-main {
