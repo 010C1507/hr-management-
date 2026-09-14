@@ -19,6 +19,10 @@ create table if not exists family_members (
   gender text check (gender in ('male', 'female', 'other')),
   birth_date date,
   photo_url text,
+  -- ความสัมพันธ์แบบเส้นเชื่อมจริง (ตั้งค่าเองได้ในหน้าโปรไฟล์ และมีผลสองทางอัตโนมัติ)
+  father_id uuid references family_members (id) on delete set null,
+  mother_id uuid references family_members (id) on delete set null,
+  spouse_id uuid references family_members (id) on delete set null,
   nickname text,
   blood_type text,
   phone text,
@@ -208,6 +212,18 @@ begin
       returning id into id_gm_maternal;
     insert into family_members (full_name, relation, gender, birth_date, photo_url, nickname, blood_type, phone, occupation, hobbies) values
       ('เอมิกา ชาวราช', 'sibling', 'female', '1993-07-19', '/avatars/woman-2.svg', 'เอม', 'O', '086-555-7788', 'เภสัชกร โรงพยาบาลหาดใหญ่', 'เดินป่า, เบเกอรี่');
+
+    -- เส้นเชื่อมความสัมพันธ์
+    update family_members set father_id = id_gf_paternal, mother_id = id_gm_paternal, spouse_id = id_mother where id = id_father;
+    update family_members set father_id = id_gf_maternal, mother_id = id_gm_maternal, spouse_id = id_father where id = id_mother;
+    update family_members set father_id = id_father, mother_id = id_mother, spouse_id = id_spouse where id = id_self;
+    update family_members set spouse_id = id_self where id = id_spouse;
+    update family_members set father_id = id_father, mother_id = id_mother where full_name = 'เอมิกา ชาวราช';
+    update family_members set father_id = id_self, mother_id = id_spouse where id in (id_child1, id_child2);
+    update family_members set spouse_id = id_gm_paternal where id = id_gf_paternal;
+    update family_members set spouse_id = id_gf_paternal where id = id_gm_paternal;
+    update family_members set spouse_id = id_gm_maternal where id = id_gf_maternal;
+    update family_members set spouse_id = id_gf_maternal where id = id_gm_maternal;
 
     insert into education_history (member_id, level, institution, field, start_year, end_year, status) values
       (id_self, 'ปริญญาโท', 'จุฬาลงกรณ์มหาวิทยาลัย', 'วิศวกรรมคอมพิวเตอร์', 2013, 2015, 'completed'),

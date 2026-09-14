@@ -28,6 +28,7 @@ const usingMockData = computed(() => !isSupabaseConfigured)
 
 const MEMBER_EXPORT_FIELDS = [
   'id', 'full_name', 'nickname', 'relation', 'gender', 'birth_date', 'photo_url',
+  'father_id', 'mother_id', 'spouse_id',
   'blood_type', 'phone', 'email', 'address', 'occupation', 'allergies',
   'chronic_conditions', 'hospital', 'hobbies', 'note',
 ]
