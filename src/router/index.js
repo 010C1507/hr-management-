@@ -1,6 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { initAuth, isAuthenticated } from '../lib/auth'
 
 const routes = [
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/Login.vue'),
+    meta: { label: 'เข้าสู่ระบบ', layout: 'plain', public: true },
+  },
   {
     path: '/',
     name: 'dashboard',
@@ -51,7 +58,23 @@ const routes = [
   },
 ]
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
 })
+
+router.beforeEach(async (to) => {
+  await initAuth()
+
+  if (to.meta.public) {
+    return isAuthenticated.value ? { path: typeof to.query.redirect === 'string' ? to.query.redirect : '/' } : true
+  }
+
+  if (!isAuthenticated.value) {
+    return { name: 'login', query: to.fullPath === '/' ? {} : { redirect: to.fullPath } }
+  }
+
+  return true
+})
+
+export default router

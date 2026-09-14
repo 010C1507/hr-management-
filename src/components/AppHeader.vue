@@ -1,37 +1,39 @@
 <script setup>
+import { computed } from 'vue'
 import AppIcon from './AppIcon.vue'
+import { demoMode, displayName, displayPhoto, isSignedIn, signOut } from '../lib/auth'
 
-defineProps({
-  name: { type: String, default: 'เอกชัย' },
-  taskDone: { type: Number, default: 7 },
-  taskTotal: { type: Number, default: 10 },
-})
+const initials = computed(() =>
+  displayName.value.trim().split(' ').map((p) => p[0]).slice(0, 2).join('')
+)
 </script>
 
 <template>
   <header class="app-header">
     <div class="welcome">
-      <h1>Welcome back, <span>{{ name }}</span>!</h1>
+      <h1>Welcome back, <span>{{ displayName }}</span>!</h1>
     </div>
 
-    <div class="task-progress">
-      <div class="bar">
-        <div class="bar-fill" :style="{ width: (taskDone / taskTotal) * 100 + '%' }" />
-      </div>
-      <span class="fraction">{{ taskDone }}/{{ taskTotal }}</span>
-    </div>
+    <span v-if="demoMode" class="demo-badge">โหมดสาธิต</span>
 
     <div class="actions">
-      <button class="icon-btn" type="button" aria-label="ทีมงาน">
-        <AppIcon name="users" :size="18" />
-      </button>
-      <button class="icon-btn" type="button" aria-label="เมนูทั้งหมด">
-        <AppIcon name="grid" :size="18" />
-      </button>
       <router-link to="/" class="icon-btn" aria-label="หน้าแรก">
         <AppIcon name="home" :size="18" />
       </router-link>
-      <router-link to="/settings" class="avatar" aria-label="โปรไฟล์">EC</router-link>
+      <button
+        v-if="isSignedIn || demoMode"
+        class="icon-btn"
+        type="button"
+        aria-label="ออกจากระบบ"
+        title="ออกจากระบบ"
+        @click="signOut"
+      >
+        <AppIcon name="logout" :size="18" />
+      </button>
+      <router-link to="/settings" class="avatar" aria-label="โปรไฟล์">
+        <img v-if="displayPhoto" :src="displayPhoto" :alt="displayName" />
+        <span v-else>{{ initials }}</span>
+      </router-link>
     </div>
   </header>
 </template>
@@ -60,34 +62,14 @@ defineProps({
   color: #1a3f7a;
 }
 
-.task-progress {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  max-width: 320px;
-  margin-left: 12px;
-}
-
-.bar {
-  flex: 1;
-  height: 7px;
-  border-radius: 8px;
-  background: #dde6f5;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  border-radius: 8px;
-  background: #1a3f7a;
-}
-
-.fraction {
-  color: var(--text-secondary);
-  font-size: 13px;
+.demo-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
 }
 
 .actions {
@@ -129,14 +111,12 @@ defineProps({
   align-items: center;
   justify-content: center;
   border: 2px solid var(--border-color);
+  overflow: hidden;
 }
 
-@media (max-width: 720px) {
-  .task-progress {
-    order: 3;
-    max-width: none;
-    margin-left: 0;
-    width: 100%;
-  }
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

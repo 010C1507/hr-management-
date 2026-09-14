@@ -102,8 +102,17 @@ create table if not exists welfare_benefits (
   created_at timestamptz not null default now()
 );
 
+-- ผูกบัญชีที่เข้าสู่ระบบ (Google) เข้ากับโปรไฟล์สมาชิกในครอบครัว
+create table if not exists member_accounts (
+  user_id uuid primary key references auth.users (id) on delete cascade,
+  member_id uuid not null unique references family_members (id) on delete cascade,
+  email text,
+  linked_at timestamptz not null default now()
+);
+
 -- Row Level Security
 alter table family_members enable row level security;
+alter table member_accounts enable row level security;
 alter table education_history enable row level security;
 alter table medical_records enable row level security;
 alter table growth_records enable row level security;
@@ -116,6 +125,16 @@ create policy "demo_select_family_members" on family_members for select using (t
 create policy "demo_insert_family_members" on family_members for insert with check (true);
 create policy "demo_update_family_members" on family_members for update using (true);
 create policy "demo_delete_family_members" on family_members for delete using (true);
+
+-- member_accounts: แต่ละบัญชีเห็น/แก้ไขได้เฉพาะการผูกของตัวเอง (ไม่ใช่นโยบาย demo)
+create policy "own_member_account_select" on member_accounts
+  for select using (auth.uid() = user_id);
+create policy "own_member_account_insert" on member_accounts
+  for insert with check (auth.uid() = user_id);
+create policy "own_member_account_update" on member_accounts
+  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "own_member_account_delete" on member_accounts
+  for delete using (auth.uid() = user_id);
 
 create policy "demo_select_education_history" on education_history for select using (true);
 create policy "demo_insert_education_history" on education_history for insert with check (true);
