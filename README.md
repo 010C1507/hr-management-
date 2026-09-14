@@ -15,6 +15,25 @@ Web UI สำหรับติดตามข้อมูลครอบคร�
 - **สวัสดิการ** — ติดตามสวัสดิการและสิทธิประโยชน์ของสมาชิกแต่ละคน (ค่ารักษาพยาบาล, การศึกษา, เงินช่วยเหลือ ฯลฯ)
 - **ตั้งค่า** — โปรไฟล์และการตั้งค่าระบบ
 
+- **เข้าสู่ระบบ** — ต้อง login ด้วยบัญชี Google ก่อนใช้งานเสมอ และเลือกครั้งแรกว่าคุณคือสมาชิกคนไหนในครอบครัว ระบบจะผูกบัญชีกับโปรไฟล์นั้นไว้ ครั้งถัดไปเข้าใช้งานได้เลย (เปลี่ยนตัวตน/ออกจากระบบได้ที่หน้า "ตั้งค่า")
+
+## ตั้งค่าเข้าสู่ระบบด้วย Google
+
+ระบบ login ใช้ Supabase Auth จึงต้องเปิดใช้ Google provider ก่อน (ทำครั้งเดียว):
+
+1. **Google Cloud Console** → https://console.cloud.google.com/apis/credentials → **Create Credentials → OAuth client ID** → เลือก **Web application**
+   - **Authorized JavaScript origins:** URL ของเว็บ เช่น `https://hr-management-mocha.vercel.app` และ `http://localhost:5173` (สำหรับ dev)
+   - **Authorized redirect URIs:** `https://<PROJECT-REF>.supabase.co/auth/v1/callback` (ดู URL จาก Supabase → Project Settings → API)
+   - คัดลอก **Client ID** และ **Client Secret**
+2. **Supabase Dashboard** → **Authentication → Providers → Google** → เปิดใช้งาน แล้ววาง Client ID / Client Secret → **Save**
+3. **Supabase Dashboard** → **Authentication → URL Configuration**
+   - **Site URL:** `https://hr-management-mocha.vercel.app`
+   - **Redirect URLs:** เพิ่ม `https://hr-management-mocha.vercel.app/**` และ `http://localhost:5173/**`
+4. รัน [`supabase/migrations/006_auth_member_accounts.sql`](./supabase/migrations/006_auth_member_accounts.sql) ใน SQL Editor เพื่อสร้างตาราง `member_accounts` (ตารางที่ผูกบัญชี Google กับโปรไฟล์สมาชิก)
+5. (แนะนำ หลังทดสอบ login ผ่านแล้ว) รัน [`supabase/migrations/007_require_auth_rls.sql`](./supabase/migrations/007_require_auth_rls.sql) เพื่อบังคับให้อ่าน/เขียนข้อมูลได้เฉพาะผู้ที่เข้าสู่ระบบแล้ว — ก่อนรันไฟล์นี้ ข้อมูลยังเปิดให้ anon key อ่านได้อยู่ (นโยบาย demo)
+
+> หากยังไม่ได้ตั้งค่า Supabase เลย หน้า login จะมีปุ่ม "เข้าดูโหมดสาธิต" ให้เข้าดูแอปด้วยข้อมูลตัวอย่างได้โดยไม่ต้อง login
+
 ## เริ่มต้นใช้งาน
 
 ```bash

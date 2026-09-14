@@ -1,6 +1,8 @@
 <script setup>
 import AppSidebar from '../components/AppSidebar.vue'
 import AppHeader from '../components/AppHeader.vue'
+import ProfileLinkModal from '../components/ProfileLinkModal.vue'
+import { needsProfileLink } from '../lib/auth'
 </script>
 
 <template>
@@ -13,6 +15,8 @@ import AppHeader from '../components/AppHeader.vue'
         <router-view />
       </main>
     </div>
+
+    <ProfileLinkModal v-if="needsProfileLink" />
   </div>
 </template>
 

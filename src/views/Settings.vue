@@ -1,28 +1,58 @@
 <script setup>
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import PageHeader from '../components/PageHeader.vue'
 import AppIcon from '../components/AppIcon.vue'
+import { authUser, demoMode, displayPhoto, linkedMember, signOut, unlinkMember } from '../lib/auth'
+import { relationLabels } from '../data/sample'
 
-const profile = {
-  name: 'เอกชัย ชาวราช',
-  email: 'eak.chawarat@gmail.com',
-  role: 'เจ้าของครอบครัว',
+const router = useRouter()
+const errorMessage = ref('')
+
+const accountEmail = computed(() => authUser.value?.email || (demoMode.value ? 'โหมดสาธิต (ไม่ได้เข้าสู่ระบบ)' : '-'))
+const profileName = computed(() => linkedMember.value?.full_name || 'ยังไม่ได้ผูกโปรไฟล์')
+const profileRole = computed(() =>
+  linkedMember.value ? relationLabels[linkedMember.value.relation] || linkedMember.value.relation : 'เลือกตัวตนของคุณเพื่อผูกกับบัญชีนี้'
+)
+const initials = computed(() =>
+  profileName.value.trim().split(' ').map((p) => p[0]).slice(0, 2).join('')
+)
+
+async function changeIdentity() {
+  errorMessage.value = ''
+  const { error } = await unlinkMember()
+  if (error) errorMessage.value = error
+}
+
+async function handleSignOut() {
+  await signOut()
+  router.push('/login')
 }
 </script>
 
 <template>
   <section>
-    <PageHeader title="ตั้งค่า" subtitle="จัดการโปรไฟล์และการตั้งค่าระบบ" />
+    <PageHeader title="ตั้งค่า" subtitle="จัดการบัญชีและการตั้งค่าระบบ" />
+
+    <p v-if="errorMessage" class="notice notice--error">{{ errorMessage }}</p>
 
     <div class="data-card profile-card">
-      <div class="avatar-lg">EC</div>
+      <img v-if="displayPhoto" class="avatar-lg" :src="displayPhoto" :alt="profileName" />
+      <div v-else class="avatar-lg">{{ initials }}</div>
       <div class="profile-info">
-        <h3>{{ profile.name }}</h3>
-        <p>{{ profile.role }}</p>
+        <h3>{{ profileName }}</h3>
+        <p>{{ profileRole }}</p>
         <div class="contact">
-          <span><AppIcon name="mail" :size="15" /> {{ profile.email }}</span>
+          <span><AppIcon name="mail" :size="15" /> {{ accountEmail }}</span>
         </div>
       </div>
-      <button class="btn-ghost" type="button">แก้ไขโปรไฟล์</button>
+      <div class="profile-actions">
+        <router-link v-if="linkedMember" class="btn-ghost" :to="`/members/${linkedMember.id}`">เปิดโปรไฟล์</router-link>
+        <button v-if="linkedMember" class="btn-ghost" type="button" @click="changeIdentity">เปลี่ยนตัวตน</button>
+        <button class="btn-ghost" type="button" @click="handleSignOut">
+          <AppIcon name="logout" :size="15" /> ออกจากระบบ
+        </button>
+      </div>
     </div>
 
     <div class="data-card options">
@@ -76,6 +106,32 @@ const profile = {
 
 .profile-info {
   flex: 1;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+img.avatar-lg {
+  object-fit: cover;
+}
+
+.notice {
+  margin: 0 0 16px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: #eff6ff;
+  color: var(--text-secondary);
+  font-size: 13px;
+  border: 1px solid #bfdbfe;
+}
+
+.notice--error {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
 }
 
 .profile-info h3 {
