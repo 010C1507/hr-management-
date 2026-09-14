@@ -1,74 +1,155 @@
-// สร้างกราฟความสัมพันธ์ของครอบครัวจากข้อมูลที่เก็บแบบ "อ้างอิงจากตัวเอง"
+// สร้างกราฟความสัมพันธ์ของครอบครัวจากเส้นเชื่อมจริง (father_id / mother_id / spouse_id)
 // แล้วใช้กราฟนี้คำนวณคำเรียกญาติเมื่อมองจากสมาชิกคนใดก็ได้
+//
+// ถ้าฐานข้อมูลยังไม่มีเส้นเชื่อม (ยังไม่ได้รัน migration 008) จะถอยไปเดาจากคอลัมน์
+// relation แบบเดิมให้อัตโนมัติ เพื่อให้ผังยังแสดงได้
 
 export function buildFamilyGraph(members) {
   const byId = new Map(members.map((m) => [m.id, m]))
   const parents = new Map()
   const children = new Map()
   const spouse = new Map()
-  const generation = new Map()
 
-  function addParent(child, parent) {
-    if (!child || !parent) return
-    if (!parents.has(child.id)) parents.set(child.id, new Set())
-    if (!children.has(parent.id)) children.set(parent.id, new Set())
-    parents.get(child.id).add(parent.id)
-    children.get(parent.id).add(child.id)
+  function addParent(childId, parentId) {
+    if (!childId || !parentId || childId === parentId) return
+    if (!byId.has(childId) || !byId.has(parentId)) return
+    if (!parents.has(childId)) parents.set(childId, new Set())
+    if (!children.has(parentId)) children.set(parentId, new Set())
+    parents.get(childId).add(parentId)
+    children.get(parentId).add(childId)
   }
 
-  function addSpouse(a, b) {
-    if (!a || !b) return
-    spouse.set(a.id, b.id)
-    spouse.set(b.id, a.id)
+  function addSpouse(aId, bId) {
+    if (!aId || !bId || aId === bId) return
+    if (!byId.has(aId) || !byId.has(bId)) return
+    spouse.set(aId, bId)
+    spouse.set(bId, aId)
   }
 
-  const one = (relation) => members.find((m) => m.relation === relation) || null
-  const all = (relation) => members.filter((m) => m.relation === relation)
+  const hasEdges = members.some((m) => m.father_id || m.mother_id || m.spouse_id)
 
-  const self = one('self')
-  const partner = one('spouse')
-  const father = one('father')
-  const mother = one('mother')
-  const gfPaternal = one('grandfather_paternal')
-  const gmPaternal = one('grandmother_paternal')
-  const gfMaternal = one('grandfather_maternal')
-  const gmMaternal = one('grandmother_maternal')
+  if (hasEdges) {
+    for (const m of members) {
+      addParent(m.id, m.father_id)
+      addParent(m.id, m.mother_id)
+      addSpouse(m.id, m.spouse_id)
+    }
+  } else {
+    const one = (relation) => members.find((m) => m.relation === relation) || null
+    const all = (relation) => members.filter((m) => m.relation === relation)
 
-  for (const child of [self, ...all('sibling')]) {
-    addParent(child, father)
-    addParent(child, mother)
-  }
-  for (const kid of all('child')) {
-    addParent(kid, self)
-    addParent(kid, partner)
-  }
-  addParent(father, gfPaternal)
-  addParent(father, gmPaternal)
-  addParent(mother, gfMaternal)
-  addParent(mother, gmMaternal)
+    const self = one('self')
+    const partner = one('spouse')
+    const father = one('father')
+    const mother = one('mother')
+    const gfPaternal = one('grandfather_paternal')
+    const gmPaternal = one('grandmother_paternal')
+    const gfMaternal = one('grandfather_maternal')
+    const gmMaternal = one('grandmother_maternal')
 
-  addSpouse(self, partner)
-  addSpouse(father, mother)
-  addSpouse(gfPaternal, gmPaternal)
-  addSpouse(gfMaternal, gmMaternal)
+    for (const child of [self, ...all('sibling')]) {
+      addParent(child?.id, father?.id)
+      addParent(child?.id, mother?.id)
+    }
+    for (const kid of all('child')) {
+      addParent(kid.id, self?.id)
+      addParent(kid.id, partner?.id)
+    }
+    addParent(father?.id, gfPaternal?.id)
+    addParent(father?.id, gmPaternal?.id)
+    addParent(mother?.id, gfMaternal?.id)
+    addParent(mother?.id, gmMaternal?.id)
 
-  const GENERATION_BY_RELATION = {
-    grandfather_paternal: -2,
-    grandmother_paternal: -2,
-    grandfather_maternal: -2,
-    grandmother_maternal: -2,
-    father: -1,
-    mother: -1,
-    self: 0,
-    spouse: 0,
-    sibling: 0,
-    child: 1,
+    addSpouse(self?.id, partner?.id)
+    addSpouse(father?.id, mother?.id)
+    addSpouse(gfPaternal?.id, gmPaternal?.id)
+    addSpouse(gfMaternal?.id, gmMaternal?.id)
   }
-  for (const m of members) {
-    if (m.relation in GENERATION_BY_RELATION) generation.set(m.id, GENERATION_BY_RELATION[m.relation])
-  }
+
+  const anchor = members.find((m) => m.relation === 'self') || members[0] || null
+  const generation = computeGenerations({ parents, children, spouse }, anchor?.id)
 
   return { byId, parents, children, spouse, generation, members }
+}
+
+// ไล่ระดับรุ่นจากจุดตั้งต้น: พ่อแม่ = -1, ลูก = +1, คู่สมรส = รุ่นเดียวกัน
+// รองรับความลึกเท่าไรก็ได้ (หลาน เหลน ลูกพี่ลูกน้อง ฯลฯ)
+function computeGenerations({ parents, children, spouse }, anchorId) {
+  const generation = new Map()
+  if (!anchorId) return generation
+
+  generation.set(anchorId, 0)
+  const queue = [anchorId]
+
+  while (queue.length) {
+    const current = queue.shift()
+    const level = generation.get(current)
+
+    for (const parentId of parents.get(current) || []) {
+      if (!generation.has(parentId)) {
+        generation.set(parentId, level - 1)
+        queue.push(parentId)
+      }
+    }
+    for (const childId of children.get(current) || []) {
+      if (!generation.has(childId)) {
+        generation.set(childId, level + 1)
+        queue.push(childId)
+      }
+    }
+    const partnerId = spouse.get(current)
+    if (partnerId && !generation.has(partnerId)) {
+      generation.set(partnerId, level)
+      queue.push(partnerId)
+    }
+  }
+
+  return generation
+}
+
+// รายชื่อลูกหลานทั้งหมดของคนนี้ (ใช้กันการตั้งความสัมพันธ์ที่วนเป็นวงกลม)
+export function descendantIds(graph, memberId) {
+  const found = new Set()
+  const queue = [memberId]
+  while (queue.length) {
+    const current = queue.shift()
+    for (const childId of graph.children.get(current) || []) {
+      if (!found.has(childId)) {
+        found.add(childId)
+        queue.push(childId)
+      }
+    }
+  }
+  return found
+}
+
+// รายชื่อบรรพบุรุษทั้งหมดของคนนี้
+export function ancestorIds(graph, memberId) {
+  const found = new Set()
+  const queue = [memberId]
+  while (queue.length) {
+    const current = queue.shift()
+    for (const parentId of graph.parents.get(current) || []) {
+      if (!found.has(parentId)) {
+        found.add(parentId)
+        queue.push(parentId)
+      }
+    }
+  }
+  return found
+}
+
+// พี่น้อง = คนที่มีพ่อหรือแม่ร่วมกันอย่างน้อยหนึ่งคน
+export function siblingIds(graph, memberId) {
+  const own = [...(graph.parents.get(memberId) || [])]
+  if (!own.length) return new Set()
+  const found = new Set()
+  for (const parentId of own) {
+    for (const childId of graph.children.get(parentId) || []) {
+      if (childId !== memberId) found.add(childId)
+    }
+  }
+  return found
 }
 
 const parentsOf = (graph, id) => [...(graph.parents.get(id) || [])]

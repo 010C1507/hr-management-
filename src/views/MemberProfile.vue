@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppIcon from '../components/AppIcon.vue'
 import GrowthTrendChart from '../components/GrowthTrendChart.vue'
+import RelationshipEditor from '../components/RelationshipEditor.vue'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { builtInAvatars, fileToSquareDataUrl } from '../data/avatars'
 import {
@@ -19,6 +20,7 @@ const route = useRoute()
 const router = useRouter()
 
 const member = ref(null)
+const allMembers = ref([])
 const growthRecords = ref([])
 const insurancePolicies = ref([])
 const welfareBenefits = ref([])
@@ -41,6 +43,7 @@ const medicalForm = ref(blankMedical())
 const tabs = [
   { key: 'overview', label: 'ภาพรวม', icon: 'grid' },
   { key: 'personal', label: 'ข้อมูลส่วนตัว', icon: 'users' },
+  { key: 'relations', label: 'ความสัมพันธ์', icon: 'tree' },
   { key: 'growth', label: 'พัฒนาการ', icon: 'heart' },
   { key: 'education', label: 'การศึกษา', icon: 'briefcase' },
   { key: 'medical', label: 'การรักษา', icon: 'plus' },
@@ -139,6 +142,7 @@ async function loadProfile() {
   errorMessage.value = ''
 
   if (!isSupabaseConfigured) {
+    allMembers.value = mockMembers
     member.value = mockMembers.find((m) => m.id === id) || null
     growthRecords.value = mockRecords.filter((r) => r.member_id === id)
     insurancePolicies.value = mockPolicies.filter((p) => p.member_id === id)
@@ -149,8 +153,9 @@ async function loadProfile() {
   }
 
   loading.value = true
-  const [memberRes, growthRes, policiesRes, benefitsRes, educationRes, medicalRes] = await Promise.all([
+  const [memberRes, allRes, growthRes, policiesRes, benefitsRes, educationRes, medicalRes] = await Promise.all([
     supabase.from('family_members').select('*').eq('id', id).single(),
+    supabase.from('family_members').select('*'),
     supabase.from('growth_records').select('*').eq('member_id', id),
     supabase.from('insurance_policies').select('*').eq('member_id', id),
     supabase.from('welfare_benefits').select('*').eq('member_id', id),
@@ -160,6 +165,8 @@ async function loadProfile() {
 
   if (memberRes.error) errorMessage.value = 'โหลดข้อมูลสมาชิกไม่สำเร็จ: ' + memberRes.error.message
   else member.value = memberRes.data
+
+  if (!allRes.error) allMembers.value = allRes.data ?? []
 
   if (!growthRes.error) growthRecords.value = growthRes.data
   if (!policiesRes.error) insurancePolicies.value = policiesRes.data
@@ -519,6 +526,11 @@ onMounted(loadProfile)
             </dl>
           </div>
         </div>
+      </div>
+
+      <!-- ความสัมพันธ์ -->
+      <div v-else-if="activeTab === 'relations'" class="tab-panel">
+        <RelationshipEditor :member="member" :members="allMembers" @changed="loadProfile" />
       </div>
 
       <!-- พัฒนาการ -->
