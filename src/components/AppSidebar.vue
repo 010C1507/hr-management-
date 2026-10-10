@@ -11,6 +11,7 @@ const menu = [
   { to: '/growth', label: 'พัฒนาการลูก', icon: 'heart' },
   { to: '/insurance', label: 'ประกัน', icon: 'shield' },
   { to: '/welfare', label: 'สวัสดิการ', icon: 'gift' },
+  { to: '/chat', label: 'Chat Room', icon: 'chat' },
 ]
 
 const bottomMenu = [{ to: '/settings', label: 'ตั้งค่า', icon: 'settings' }]

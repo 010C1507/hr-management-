@@ -51,6 +51,12 @@ const routes = [
     meta: { label: 'สวัสดิการ', icon: 'gift' },
   },
   {
+    path: '/chat',
+    name: 'chat',
+    component: () => import('../views/ChatRoom.vue'),
+    meta: { label: 'Chat Room', icon: 'chat' },
+  },
+  {
     path: '/settings',
     name: 'settings',
     component: () => import('../views/Settings.vue'),
