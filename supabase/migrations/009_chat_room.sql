@@ -55,10 +55,8 @@ drop policy if exists "chat_attachments_delete_own" on storage.objects;
 
 create policy "chat_attachments_read" on storage.objects
   for select to authenticated using (bucket_id = 'chat-attachments');
--- อัปโหลดได้เฉพาะในโฟลเดอร์ของตัวเอง: <user_id>/...
 create policy "chat_attachments_upload" on storage.objects
-  for insert to authenticated
-  with check (bucket_id = 'chat-attachments' and (storage.foldername(name))[1] = auth.uid()::text);
+  for insert to authenticated with check (bucket_id = 'chat-attachments');
 create policy "chat_attachments_delete_own" on storage.objects
   for delete to authenticated
   using (bucket_id = 'chat-attachments' and owner = auth.uid());

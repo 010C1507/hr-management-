@@ -264,7 +264,12 @@ async function send() {
       .upload(attachment_path, file, { contentType: base.attachment_type, upsert: false })
     if (error) {
       sending.value = false
-      errorMessage.value = 'อัปโหลดไฟล์ไม่สำเร็จ: ' + error.message
+      errorMessage.value =
+        'อัปโหลดไฟล์ไม่สำเร็จ: ' +
+        error.message +
+        (/row-level security|bucket not found/i.test(error.message)
+          ? ' — ให้รัน supabase/migrations/010_chat_storage_policies.sql ใน Supabase SQL Editor'
+          : '')
       return
     }
   }
