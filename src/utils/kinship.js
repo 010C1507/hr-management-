@@ -317,22 +317,77 @@ export function generationName(offset) {
   return GENERATION_NAMES[String(offset)] || (offset < 0 ? 'รุ่นก่อนหน้า' : 'รุ่นถัดไป')
 }
 
-// เรียงสมาชิกในแต่ละรุ่นให้คู่สมรสอยู่ติดกัน
-export function orderRow(graph, rowMembers) {
-  const remaining = [...rowMembers].sort(
+// เรียงสมาชิกในแต่ละรุ่น:
+// - พี่น้องพ่อแม่เดียวกันอยู่ติดกันเป็นกลุ่ม และกลุ่มเรียงตามตำแหน่งพ่อแม่ในแถวบน (prevOrder)
+// - คู่สมรสอยู่ติดกัน โดยคนที่แต่งงานกับคนจากอีกครอบครัวจะอยู่ขอบกลุ่มฝั่งที่หันไปหาคู่
+// เพื่อไม่ให้เส้นจากพ่อแม่ของสองครอบครัวทับกัน
+export function orderRow(graph, rowMembers, prevOrder = []) {
+  const byBirth = [...rowMembers].sort(
     (a, b) => new Date(a.birth_date || '2100-01-01') - new Date(b.birth_date || '2100-01-01')
   )
+  const inRow = new Set(byBirth.map((m) => m.id))
+  const parentKey = (id) => [...(graph.parents.get(id) || [])].sort().join('|')
+  const partnerOf = (id) => {
+    const s = graph.spouse.get(id)
+    return s && inRow.has(s) ? s : null
+  }
+
+  // จัดกลุ่ม: คนที่มีพ่อแม่ในผัง → กลุ่มตามคู่พ่อแม่, คนที่ไม่มี → ตามคู่สมรสหรืออยู่เดี่ยว
+  const groups = new Map()
+  const attached = new Map() // memberId -> in-law partner ที่ไม่มีพ่อแม่ในผัง
+  const groupOf = new Map()
+  for (const m of byBirth) {
+    const key = parentKey(m.id)
+    if (!key) continue
+    if (!groups.has(key)) groups.set(key, { key, members: [] })
+    groups.get(key).members.push(m)
+    groupOf.set(m.id, key)
+  }
+  for (const m of byBirth) {
+    if (groupOf.has(m.id) || attached.has(m.id) || [...attached.values()].includes(m)) continue
+    const partnerId = partnerOf(m.id)
+    if (partnerId && groupOf.has(partnerId)) {
+      attached.set(partnerId, m)
+      continue
+    }
+    const key = `solo:${m.id}`
+    groups.set(key, { key, members: [m] })
+    groupOf.set(m.id, key)
+    const partner = partnerId && byBirth.find((x) => x.id === partnerId)
+    if (partner && !groupOf.has(partner.id) && !parentKey(partner.id)) attached.set(m.id, partner)
+  }
+
+  // เรียงกลุ่มตามตำแหน่งเฉลี่ยของพ่อแม่ในแถวบน
+  const prevIndex = new Map(prevOrder.map((id, i) => [id, i]))
+  const position = (group) => {
+    const idx = [...(graph.parents.get(group.members[0].id) || [])]
+      .map((p) => prevIndex.get(p))
+      .filter((i) => i !== undefined)
+    return idx.length ? idx.reduce((a, b) => a + b, 0) / idx.length : Infinity
+  }
+  const firstBirth = (group) => byBirth.indexOf(group.members[0])
+  const ordered = [...groups.values()].sort(
+    (a, b) => position(a) - position(b) || firstBirth(a) - firstBirth(b)
+  )
+  const rank = new Map(ordered.map((g, i) => [g.key, i]))
+
+  // ในกลุ่ม: คนที่แต่งงานกับคนจากกลุ่มอื่นไปอยู่ขอบฝั่งที่ใกล้กลุ่มนั้น
   const placed = []
-  const done = new Set()
-  for (const member of remaining) {
-    if (done.has(member.id)) continue
-    placed.push(member)
-    done.add(member.id)
-    const spouseId = graph.spouse.get(member.id)
-    const partner = remaining.find((m) => m.id === spouseId && !done.has(m.id))
-    if (partner) {
-      placed.push(partner)
-      done.add(partner.id)
+  for (const group of ordered) {
+    const myRank = rank.get(group.key)
+    const side = (m) => {
+      const partnerId = partnerOf(m.id)
+      const other = partnerId && groupOf.get(partnerId)
+      if (!other || other === group.key) return 0
+      return rank.get(other) < myRank ? -1 : 1
+    }
+    const members = [...group.members].sort((a, b) => side(a) - side(b))
+    for (const m of members) {
+      const inLaw = attached.get(m.id)
+      // in-law อยู่ฝั่งนอกของกลุ่ม: ถ้าคนนี้อยู่ต้นกลุ่ม (และไม่ใช่คนเดียว) ให้ in-law อยู่ซ้าย
+      if (inLaw && members.length > 1 && m === members[0]) placed.push(inLaw, m)
+      else if (inLaw) placed.push(m, inLaw)
+      else placed.push(m)
     }
   }
   return placed
