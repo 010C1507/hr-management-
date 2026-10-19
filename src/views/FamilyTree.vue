@@ -43,14 +43,19 @@ const rows = computed(() => {
     if (!buckets.has(gen)) buckets.set(gen, [])
     buckets.get(gen).push(member)
   }
+  let prevOrder = []
   return [...buckets.entries()]
     .sort((a, b) => a[0] - b[0])
-    .map(([gen, list]) => ({
-      generation: gen,
-      offset: gen - viewpointGeneration.value,
-      label: generationName(gen - viewpointGeneration.value),
-      members: orderRow(graph.value, list),
-    }))
+    .map(([gen, list]) => {
+      const ordered = orderRow(graph.value, list, prevOrder)
+      prevOrder = ordered.map((m) => m.id)
+      return {
+        generation: gen,
+        offset: gen - viewpointGeneration.value,
+        label: generationName(gen - viewpointGeneration.value),
+        members: ordered,
+      }
+    })
 })
 
 const maxRowCount = computed(() => Math.max(1, ...rows.value.map((r) => r.members.length)))
@@ -113,6 +118,7 @@ function drawLines() {
     childGroups.get(key).kids.push(member.id)
   }
 
+  const buses = []
   for (const { parentIds, kids } of childGroups.values()) {
     const parentRects = parentIds.map(rect).filter(Boolean)
     const kidRects = kids.map(rect).filter(Boolean)
@@ -129,11 +135,36 @@ function drawLines() {
 
     const topMost = Math.min(...kidRects.map((k) => k.top))
     if (topMost <= anchor.y) continue
-    const busY = anchor.y + (topMost - anchor.y) / 2
-    out.push(`M${anchor.x} ${anchor.y} V${busY}`)
     const xs = [anchor.x, ...kidRects.map((k) => k.cx)]
-    out.push(`M${Math.min(...xs)} ${busY} H${Math.max(...xs)}`)
-    for (const k of kidRects) out.push(`M${k.cx} ${busY} V${k.top}`)
+    buses.push({ anchor, kidRects, topMost, minX: Math.min(...xs), maxX: Math.max(...xs) })
+  }
+
+  // เส้นแนวนอนของแต่ละครอบครัวในรุ่นเดียวกัน ถ้าช่วงทับกันให้แยกไปคนละระดับ จะได้ไม่ดูเหมือนเชื่อมกัน
+  const byRow = new Map()
+  for (const bus of buses) {
+    const key = Math.round(bus.topMost)
+    if (!byRow.has(key)) byRow.set(key, [])
+    byRow.get(key).push(bus)
+  }
+  const LANE_GAP = 12
+  for (const row of byRow.values()) {
+    const lanes = []
+    row.sort((a, b) => a.minX - b.minX)
+    for (const bus of row) {
+      let lane = lanes.findIndex((end) => end < bus.minX - LANE_GAP)
+      if (lane === -1) lane = lanes.length
+      lanes[lane] = bus.maxX
+      bus.lane = lane
+    }
+    const top = Math.max(...row.map((b) => b.anchor.y))
+    const mid = top + (row[0].topMost - top) / 2
+    for (const bus of row) {
+      const offset = (bus.lane - (lanes.length - 1) / 2) * LANE_GAP
+      const busY = Math.min(Math.max(mid + offset, bus.anchor.y + 4), bus.topMost - 4)
+      out.push(`M${bus.anchor.x} ${bus.anchor.y} V${busY}`)
+      out.push(`M${bus.minX} ${busY} H${bus.maxX}`)
+      for (const k of bus.kidRects) out.push(`M${k.cx} ${busY} V${k.top}`)
+    }
   }
 
   paths.value = out
